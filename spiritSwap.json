@@ -1,0 +1,66 @@
+{
+    "name":"Revest Spirit Swap Integration",
+    "description":"Allows locking SPIRIT into inSPIRIT with liquid positions",
+    "front_display": [
+        {
+            "label":"Rewards available!",
+            "encode":"bool",
+            "primitive":"alert",
+            "extra_data": {
+                "block_withdrawal":true,
+                "renderWhenIndexNotEmpty":2
+            },
+            "index":2
+        },
+        {
+            "label":"image_overlay",
+            "primitive":"image",
+            "value":"https://2373885544-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-MXVLUYT4_8bBeXXW_1r%2F-MjcsI2Ik-JiMlViCoSe%2F-Mjd39UULGjoULOIeD2V%2FSPIRIT%20Logo%20Small.png?alt=media&token=aba76229-9d60-4f15-94a7-e6cfbbf71ab6"
+        }
+    ],
+    "info_modal": [
+        {
+            "label":"Smart Wallet Address",
+            "encode":"address",
+            "primitive":"string",
+            "index":0
+        },
+        {
+            "label":"Assets and Rewards",
+            "encode":"string",
+            "primitive":"string",
+            "index":1
+        },
+        {
+            "label":"",
+            "encode":"uint256",
+            "primitive":"maxExtensionDate",
+            "index":3
+        },
+        {
+            "label":"",
+            "encode":"address",
+            "primitive":"approveAssetForOutputReceiver",
+            "index":4
+        },
+        {
+            "label":"SPIRIT Balance",
+            "encode":"int128",
+            "primitive":"integer",
+            "extra_data":{
+                "decimal_precision":18
+            },
+            "index":5
+        }
+        
+    ],
+    "updates":[
+        {
+            "label":"Claim all rewards",
+            "primitive":"button",
+            "extra_data":{
+                "renderWhenIndexNotEmpty":2
+            }
+        }
+    ]
+}

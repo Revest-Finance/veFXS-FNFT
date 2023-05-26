@@ -1,0 +1,30 @@
+{
+    "name":"Revest Uniswap Demo",
+    "description":"Swaps whatever asset is within for a different token upon withdrawal",
+    "front_display": [
+        {
+            "label": "Swaps to: ",
+            "encode":"string",
+            "primitive":"string",
+            "index":2
+        },
+        {
+            "label":"Amount swapped to: ",
+            "encode":"uint256",
+            "primitive":"integer",
+            "extra_data": {
+                "decimal_precision": -1,
+                "source_precision_from_index":1
+            },
+            "index":0
+        }
+    ],
+    "info_modal": [
+        {
+            "label":"",
+            "encode":"uint8",
+            "primitive":"integer",
+            "index":1
+        }
+    ]
+}
