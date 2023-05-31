@@ -55,8 +55,7 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
     // NFT Garage Admin Account 
     address public ADMIN;
 
-    // SPIRIT token    
-    address public constant REWARD_TOKEN = 0x5Cc61A78F164885776AA610fb0FE1257df78E59B;
+   
 
     // Template address for VE wallets
     address public immutable TEMPLATE;
@@ -72,9 +71,6 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
     uint private constant MAX_LOCKUP = 4 * 365 days;
 
     uint private constant FREE_AMOUNT = 100 ether;
-
-    //percent for 
-
 
     // Fee tracker
     uint private weiFee = 1 ether;
@@ -92,9 +88,14 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
 
 
 
+    //% fee when lock token (fee = 1 means 1% of the lock up amount will be taken as fee)
+    uint public fee;
 
-    // WFTM contract
-    address private constant WFTM = 0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83;
+    // FXS contract
+    address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
+    // veFXS token    
+    address public constant REWARD_TOKEN = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
+
 
 
     // Control variable to let all users utilize smart wallets for proxy execution
@@ -142,23 +143,12 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
         uint endTime,
         uint amountToLock,
         bool useWhitelist
-    ) external payable nonReentrant returns (uint fnftId) {    
-        require(msg.value >= weiFee, 'Insufficient fee!');
-        require(!useWhitelist || (whitelistEnabled && whitelist[msg.sender]), '!whitelisted');
-
-        // Immediately remove sender from whitelist to follow checks-effects-interactions
-        if(useWhitelist) {
-            whitelist[msg.sender] = false;
-        }
-
-        // Pay fee: this is dependent on this contract being whitelisted to allow it to pay
-        // nothing via the typical method
-        // Pay fee to SPIRIT ADMIN
-        {
-            uint wftmFee = msg.value;
-            IWETH(WFTM).deposit{value: msg.value}();
-            IERC20(WFTM).safeTransfer(ADMIN, wftmFee);
-        }
+    ) external payable nonReentrant returns (uint fnftId) {   
+        //Require fee check & PAY it!
+        uint FXSFee = msg.value;
+        require(FXSFee >= amountToLock * fee / 100, "Insufficient Fee!");
+        IWETH(FXS).deposit{value: msg.value}();
+        IERC20(FXS).safeTransfer(ADMIN, FXSFee);
 
         /// Mint FNFT
         {
