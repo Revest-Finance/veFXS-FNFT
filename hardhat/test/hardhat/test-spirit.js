@@ -5,7 +5,7 @@ const { expect, assert } = require("chai");
 const { ethers } = require("hardhat");
 const { solidity } =  require("ethereum-waffle");
 const { BigNumber } = require("ethers");
-const { VE_ABI, DISTRO_ABI } = require("./utils/abi");
+const { VE_ABI, DISTRO_ABI } = require("../utils/abi");
 
 require('dotenv').config();
 
