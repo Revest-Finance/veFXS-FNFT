@@ -83,8 +83,8 @@
       }
     },
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1685635795192,
-      "contentHash": "8bed2f8ad6f62579b94ddf7e936a186f",
+      "lastModificationDate": 1685646282590,
+      "contentHash": "34d194d5c8dd1dd2fc900529d4af550c",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -1605,6 +1605,50 @@
         }
       }
     },
+    "node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      "lastModificationDate": 1685633150083,
+      "contentHash": "acad756301f0fb200ecc66138e8cd5c5",
+      "sourceName": "node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "node_modules/@openzeppelin/contracts/utils/Context.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "ERC20": {
+          "0.8.20+commit.a1b79de6.Darwin.appleclang": "ERC20.sol/ERC20.json"
+        }
+      }
+    },
     "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
       "lastModificationDate": 1685633150523,
       "contentHash": "0eac3e1a83ee62326ca007811285b274",
@@ -1893,8 +1937,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1685638960979,
-      "contentHash": "3064c75ad3961c0b3e620f118cc2156d",
+      "lastModificationDate": 1685648352438,
+      "contentHash": "81ce9bdc723fe6701f4f8b8b5dd7fa7e",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {
@@ -1959,6 +2003,7 @@
         "node_modules/@openzeppelin/contracts/access/Ownable.sol",
         "node_modules/@openzeppelin/contracts/proxy/Clones.sol",
         "node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
         "node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",

@@ -513,5 +513,9 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         return min;
     }
 
+    function test() public pure returns(uint res)  {
+        res = 1;
+    }
+
     
 }
