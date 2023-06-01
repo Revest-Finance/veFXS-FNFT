@@ -31,6 +31,10 @@ interface IWETH {
     function deposit() external payable;
 }
 
+interface veFrax {
+    function create_lock(uint256 _value, uint256 _unlock_time) external;
+}
+
 /**
  * @title SpiritSwap <> Revest integration for tokenizing inSPIRIT positions
  * @author RobAnon
@@ -93,11 +97,10 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
 
     // FXS contract
     address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
-    // veFXS token    
+    address public constant veFXS = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
     address public constant REWARD_TOKEN = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
 
-
-
+    
     // Control variable to let all users utilize smart wallets for proxy execution
     bool public globalProxyEnabled;
 

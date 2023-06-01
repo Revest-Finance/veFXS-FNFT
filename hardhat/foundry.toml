@@ -5,3 +5,7 @@ libs = ['node_modules', 'lib']
 test = 'test/foundry'
 script = 'scripts/foundry'
 cache_path = 'forge-cache'
+
+
+eth-rpc-url = "https://eth-mainnet.alchemyapi.io/v2/zOVFUzSEld1v_MuTOqGPYkTYttwBUrmF"
+
