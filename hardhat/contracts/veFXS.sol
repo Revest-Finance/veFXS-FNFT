@@ -108,14 +108,14 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
     bool public whitelistEnabled;
 
     // Initialize the contract with the needed valeus
-    constructor(address _provider, address _vE, address _distro, address _spiritAdmin) {
+    constructor(address _provider, address _vE, address _distro, address _frxAdmin) {
         addressRegistry = _provider;
         VOTING_ESCROW = _vE;
         TOKEN = IVotingEscrow(_vE).token();
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(REWARD_TOKEN);
         TEMPLATE = address(wallet);
         DISTRIBUTOR = _distro;
-        ADMIN = _spiritAdmin;
+        ADMIN = _frxAdmin;
     }
 
     modifier onlyRevestController() {
@@ -139,17 +139,12 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
     }
 
 
+    //TODO: charge the amount of veFXS
+
     function lockTokens(
         uint endTime,
-        uint amountToLock,
-        bool useWhitelist
+        uint amountToLock
     ) external payable nonReentrant returns (uint fnftId) {   
-        //Require fee check & PAY it!
-        uint FXSFee = msg.value;
-        require(FXSFee >= amountToLock * fee / 100, "Insufficient Fee!");
-        IWETH(FXS).deposit{value: msg.value}();
-        IERC20(FXS).safeTransfer(ADMIN, FXSFee);
-
         /// Mint FNFT
         {
             // Initialize the Revest config object
@@ -184,12 +179,7 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
             VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
 
             // Transfer the tokens from the user to the smart wallet
-            if(useWhitelist) {
-                amountToLock = FREE_AMOUNT;
-                IERC20(TOKEN).safeTransfer(smartWallAdd, amountToLock);
-            } else {
-                IERC20(TOKEN).safeTransferFrom(msg.sender, smartWallAdd, amountToLock);
-            }
+            IERC20(TOKEN).safeTransferFrom(msg.sender, smartWallAdd, amountToLock);
 
             // We use our admin powers on SmartWalletWhitelistV2 to approve the newly created smart wallet
             SmartWalletWhitelistV2(IVotingEscrow(VOTING_ESCROW).smart_wallet_checker()).approveWallet(smartWallAdd);
@@ -214,9 +204,16 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
 
+        //withdraw 
         wallet.withdraw(VOTING_ESCROW);
         uint balance = IERC20(TOKEN).balanceOf(address(this));
-        IERC20(TOKEN).safeTransfer(owner, balance);
+        uint feeFXS = balance * fee / 100;
+        uint balanceAfterFee = balance - feeFXS;
+        IERC20(TOKEN).safeTransfer(owner, balanceAfterFee);
+
+        //chargeFee
+        balance = IERC20(TOKEN).balanceOf(address(this));
+        IERC20(TOKEN).safeTransfer(ADMIN, balanceAfterFee);
 
         // Clean up memory
         SmartWalletWhitelistV2(IVotingEscrow(VOTING_ESCROW).smart_wallet_checker()).revokeWallet(smartWallAdd);
@@ -318,7 +315,7 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
         DISTRIBUTOR = _distro;
     }
 
-    function setSpiritAdmin(address _admin) external onlyOwner {
+    function setFrxAdmin(address _admin) external onlyOwner {
         ADMIN = _admin;
     }
 
