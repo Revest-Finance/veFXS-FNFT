@@ -25,6 +25,10 @@ interface IVotingEscrow {
 
     function withdraw() external;
 
+    function commit_smart_wallet_checker(address addr) external;
+
+    function apply_smart_wallet_checker() external;
+
     function smart_wallet_checker() external view returns (address walletCheck);
 
     function token() external view returns (address tok);
@@ -38,5 +42,6 @@ interface IVotingEscrow {
     function user_point_epoch(address _addr) external view returns (uint epoch);
 
     function user_point_history(address _addr, uint index) external view returns (Point memory pt);
+
 
 }

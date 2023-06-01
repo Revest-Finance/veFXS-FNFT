@@ -40,7 +40,7 @@ interface veFrax {
  * @author RobAnon
  * @dev 
  */
-contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, ReentrancyGuard {
+contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, ReentrancyGuard {
     
     using SafeERC20 for IERC20;
 
@@ -100,7 +100,7 @@ contract RevestFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentran
     address public constant veFXS = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
     address public constant REWARD_TOKEN = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
 
-    
+
     // Control variable to let all users utilize smart wallets for proxy execution
     bool public globalProxyEnabled;
 
