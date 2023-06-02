@@ -38,6 +38,11 @@ contract veFXSRevest is Test {
     address admin = makeAddr("admin");
     address fxsWhale = 0xd53E50c63B0D549f142A2dCfc454501aaA5B7f3F;
 
+    uint fnftId;
+    uint fnftId2;
+
+    address smartWalletAddress;
+
 
     function setUp() public {
         revestVe  = new RevestVeFXS(Provider, VOTING_ESCROW, DISTRIBUTOR, admin);
@@ -62,7 +67,9 @@ contract veFXSRevest is Test {
         veFXS.apply_smart_wallet_checker();
     }
 
-
+    /**
+     * This test case focus on if the user is able to mint the FNFT after deposit 1 token of FXS into veFXS 
+     */
     function testMint() public {
         uint time = block.timestamp;
     
@@ -75,26 +82,50 @@ contract veFXSRevest is Test {
         hoax(fxsWhale);
         FXS.approve(address(revestVe), 1e18);
         hoax(fxsWhale);
-        uint fnftId = revestVe.lockTokens(expiration, amount);
+        fnftId = revestVe.lockTokens(expiration, amount);
 
         uint expectedValue = revestVe.getValue(fnftId);
         console.log("veFXS balance should be around 2e18: ", expectedValue);
-        address smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+        smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
         console.log("SmartWallet add at address: ", smartWalletAddress);
+        console.log("The minted FNFT has the ID: ", fnftId);
     }
 
+
+    /**
+     * This test case focus on if when the admin can receive the fee
+     */
     function testReceiveFee() public {
-        console.log("Done!");
+        //Setting up phase
+        //    Outline the parameters that will govern the FNFT
+        uint time = block.timestamp;
+        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+        uint fee = 1 wei;
+        uint amount = 1e18; //FXS  
+
+        hoax(fxsWhale);
+        FXS.approve(address(revestVe), 1e18);
+        hoax(fxsWhale);
+        fnftId = revestVe.lockTokens(expiration, amount);
     }
 
+    /**
+     * This test case focus on if user can deposit additional amount into the vault
+     */
     function testDepositAdditional() public {
         console.log("Done!");
     }
 
+    /**
+     * This test case focus on if user can extend the locking period on the vault
+     */
     function testExtendLockingPeriod() public {
         console.log("Done!");
     }
 
+    /**
+     * This test case focus on if user can unlock and withdaw their fnft
+     */
     function testUnlockAndWithdraw() public {
         console.log("Done!");
     }

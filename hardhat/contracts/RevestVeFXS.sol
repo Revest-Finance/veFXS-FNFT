@@ -56,7 +56,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Distributor for rewards address
     address public DISTRIBUTOR;
 
-    // NFT Garage Admin Account 
+    // Revest Admin Account 
     address public ADMIN;
 
    
@@ -148,6 +148,11 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint endTime,
         uint amountToLock
     ) external payable nonReentrant returns (uint fnftId) {   
+        //charging fee as FXS token
+        uint FXSFee = amountToLock * fee / 100;
+        IERC20(FXS).safeTransferFrom(msg.sender, ADMIN, FXSFee);
+        amountToLock = amountToLock - FXSFee;
+
         /// Mint FNFT
         {
             // Initialize the Revest config object
@@ -194,7 +199,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     }
 
 
-    function receiveRevestOutput(
+     function receiveRevestOutput(
         uint fnftId,
         address,
         address payable owner,
@@ -207,16 +212,9 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
 
-        //withdraw 
         wallet.withdraw(VOTING_ESCROW);
         uint balance = IERC20(TOKEN).balanceOf(address(this));
-        uint feeFXS = balance * fee / 100;
-        uint balanceAfterFee = balance - feeFXS;
-        IERC20(TOKEN).safeTransfer(owner, balanceAfterFee);
-
-        //chargeFee
-        balance = IERC20(TOKEN).balanceOf(address(this));
-        IERC20(TOKEN).safeTransfer(ADMIN, balanceAfterFee);
+        IERC20(TOKEN).safeTransfer(owner, balance);
 
         // Clean up memory
         SmartWalletWhitelistV2(IVotingEscrow(VOTING_ESCROW).smart_wallet_checker()).revokeWallet(smartWallAdd);
@@ -511,10 +509,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
             }
         }
         return min;
-    }
-
-    function test() public pure returns(uint res)  {
-        res = 1;
     }
 
     
