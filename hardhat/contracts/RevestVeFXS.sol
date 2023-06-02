@@ -354,17 +354,19 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     }
 
     function getOutputDisplayValues(uint fnftId) external view override returns (bytes memory displayData) {
-        (uint reward, bool hasRewards) = getRewardsForFNFT(fnftId);
-        string memory rewardsDesc;
-        if(hasRewards) {
-            string memory par1 = string(abi.encodePacked(RevestHelper.getName(REWARD_TOKEN),": "));
-            string memory par2 = string(abi.encodePacked(RevestHelper.amountToDecimal(reward, REWARD_TOKEN), " [", RevestHelper.getTicker(REWARD_TOKEN), "] Tokens Available"));
-            rewardsDesc = string(abi.encodePacked(par1, par2));
-        }
-        address smartWallet = getAddressForFNFT(fnftId);
-        uint maxExtension = block.timestamp / (1 weeks) * (1 weeks) + MAX_LOCKUP; //Ensures no confusion with time zones and date-selectors
-        (int128 spiritBalance, ) = IVotingEscrow(VOTING_ESCROW).locked(smartWallet);
-        displayData = abi.encode(smartWallet, rewardsDesc, hasRewards, maxExtension, TOKEN, spiritBalance);
+        //TODO: add later
+
+        // (uint reward, bool hasRewards) = getRewardsForFNFT(fnftId);
+        // string memory rewardsDesc;
+        // if(hasRewards) {
+        //     string memory par1 = string(abi.encodePacked(RevestHelper.getName(REWARD_TOKEN),": "));
+        //     string memory par2 = string(abi.encodePacked(RevestHelper.amountToDecimal(reward, REWARD_TOKEN), " [", RevestHelper.getTicker(REWARD_TOKEN), "] Tokens Available"));
+        //     rewardsDesc = string(abi.encodePacked(par1, par2));
+        // }
+        // address smartWallet = getAddressForFNFT(fnftId);
+        // uint maxExtension = block.timestamp / (1 weeks) * (1 weeks) + MAX_LOCKUP; //Ensures no confusion with time zones and date-selectors
+        // (int128 spiritBalance, ) = IVotingEscrow(VOTING_ESCROW).locked(smartWallet);
+        // displayData = abi.encode(smartWallet, rewardsDesc, hasRewards, maxExtension, TOKEN, spiritBalance);
     }
 
     function getAddressRegistry() external view override returns (address) {

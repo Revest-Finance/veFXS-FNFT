@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GNU-GPL v3.0 or later
 
 import "./interfaces/IVotingEscrow.sol";
-import "./interfaces/IDistributor.sol";
 import "./interfaces/IRewardsHandler.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -71,29 +70,12 @@ contract VestedEscrowSmartWallet {
     }
 
     function claimRewards(
-        address distributor, 
         address votingEscrow, 
         address caller, 
         address rewards,
-        address spiritAdmin
+        address revestAdmin
     ) external onlyMaster {
-        bool exitFlag;
-        while(!exitFlag) {
-            IDistributor(distributor).claim();
-            exitFlag = IDistributor(distributor).user_epoch_of(address(this)) + 50 >= IVotingEscrow(votingEscrow).user_point_epoch(address(this));
-        }   
-
-        uint bal = IERC20(REWARD_TOKEN).balanceOf(address(this));
-        {
-            uint fee = bal * feeNumerator / feeDenominator;
-            uint fee2 = bal * feeNumerator2 / feeDenominator;
-            bal -= fee;
-            bal -= fee2;
-            IRewardsHandler(rewards).receiveFee(REWARD_TOKEN, fee);
-            IERC20(REWARD_TOKEN).safeTransfer(spiritAdmin, fee2);
-        }
-        IERC20(REWARD_TOKEN).safeTransfer(caller, bal);
-        _cleanMemory();
+        //No reward to claim
     }
 
     // Proxy function for ease of use and gas-savings
