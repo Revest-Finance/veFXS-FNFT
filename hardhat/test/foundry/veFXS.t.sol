@@ -132,11 +132,9 @@ contract veFXSRevest is Test {
         //Testing Phase
         console.log("Current veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
 
-
-        uint timeSkip = (1 * 365 * 60 * 60 * 24); // 1 years
-        skip(timeSkip);
+        destroyAccount(revestVe.getAddressForFNFT(fnftId), admin);
         
-        hoax(fxsWhale);have
+        hoax(fxsWhale);
         FXS.approve(address(revest), amount);
         hoax(fxsWhale);
         revest.depositAdditionalToFNFT(fnftId, amount, 1);
@@ -151,7 +149,25 @@ contract veFXSRevest is Test {
      * This test case focus on if user can extend the locking period on the vault
      */
     function testExtendLockingPeriod() public {
-        console.log("Done!");
+        uint time = block.timestamp;
+        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+        uint fee = 1 wei;
+        uint amount = 1e18; //FXS  
+
+        hoax(fxsWhale);
+        FXS.approve(address(revestVe), amount);
+        hoax(fxsWhale);
+        fnftId = revestVe.lockTokens(expiration, amount);
+
+        uint timeSkip = (2 * 7 * 60 * 60 * 24); // 2 week years
+        skip(timeSkip);
+
+        time = block.timestamp;
+        expiration = time + (0.25 * 365 * 60 * 60 * 24 - 3600); // three month in future
+
+        hoax(fxsWhale);
+        revest.extendFNFTMaturity(fnftId, expiration);
+
     }
 
     /**
