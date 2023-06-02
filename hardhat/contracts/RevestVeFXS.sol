@@ -11,7 +11,6 @@ import "./interfaces/ILockManager.sol";
 import "./interfaces/IRewardsHandler.sol";
 import "./interfaces/IVotingEscrow.sol";
 import "./interfaces/IFeeReporter.sol";
-import "./interfaces/IDistributor.sol";
 import "./VestedEscrowSmartWallet.sol";
 import "./SmartWalletWhitelistV2.sol";
 
@@ -52,9 +51,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
 
     // Token used for voting escrow
     address public immutable TOKEN;
-
-    // Distributor for rewards address
-    address public DISTRIBUTOR;
 
     // Revest Admin Account 
     address public ADMIN;
@@ -111,13 +107,12 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     bool public whitelistEnabled;
 
     // Initialize the contract with the needed valeus
-    constructor(address _provider, address _vE, address _distro, address _frxAdmin) {
+    constructor(address _provider, address _vE, address _frxAdmin) {
         addressRegistry = _provider;
         VOTING_ESCROW = _vE;
         TOKEN = IVotingEscrow(_vE).token();
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(REWARD_TOKEN);
         TEMPLATE = address(wallet);
-        DISTRIBUTOR = _distro;
         ADMIN = _frxAdmin;
     }
 
@@ -260,20 +255,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint fnftId,
         bytes memory
     ) external override onlyTokenHolder(fnftId) {
-        address rewardsAdd = IAddressRegistry(addressRegistry).getRewardsHandler();
-        address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
-        VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
-        { 
-            // Want this to be re-run if we change fee distributors or rewards handlers
-            address virtualAdd = address(uint160(uint256(keccak256(abi.encodePacked(DISTRIBUTOR, rewardsAdd)))));
-            if(!_isApproved(smartWallAdd, virtualAdd)) {
-                address[] memory addrArray = new address[](1);
-                addrArray[0] = REWARD_TOKEN;
-                wallet.proxyApproveAll(addrArray, rewardsAdd);
-                _setIsApproved(smartWallAdd, virtualAdd, true);
-            }
-        }
-        wallet.claimRewards(DISTRIBUTOR, VOTING_ESCROW, msg.sender, rewardsAdd, ADMIN);
+        
     }       
 
     function proxyExecute(
@@ -311,11 +293,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     function setAddressRegistry(address addressRegistry_) external override onlyOwner {
         addressRegistry = addressRegistry_;
     }
-
-    function setDistributor(address _distro) external onlyOwner {
-        DISTRIBUTOR = _distro;
-    }
-
+    
     function setFrxAdmin(address _admin) external onlyOwner {
         ADMIN = _admin;
     }
@@ -407,89 +385,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
 
     function getAddressForFNFT(uint fnftId) public view returns (address smartWallAdd) {
         smartWallAdd = Clones.predictDeterministicAddress(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
-    }
-
-    // Find rewards for a given smart wallet using the Curve formulae
-    function getRewardsForFNFT(uint fnftId) private view returns (uint reward, bool rewardsPresent) {
-        uint userEpoch;
-        IDistributor distro = IDistributor(DISTRIBUTOR);
-        IVotingEscrow voting = IVotingEscrow(VOTING_ESCROW);
-        address smartWallAdd = getAddressForFNFT(fnftId);
-        
-        uint lastTokenTime = distro.last_token_time();
-        lastTokenTime = lastTokenTime / WEEK * WEEK;
-
-        uint maxUserEpoch = voting.user_point_epoch(smartWallAdd);
-        uint startTime = distro.start_time();
-        
-        if(maxUserEpoch == 0) {
-            return (reward, rewardsPresent);
-        }
-
-        uint weekCursor = distro.time_cursor_of(smartWallAdd);
-        if(weekCursor == 0) {
-            userEpoch = findTimestampUserEpoch(smartWallAdd, startTime, maxUserEpoch);
-        } else {
-            userEpoch = distro.user_epoch_of(smartWallAdd);
-        }
-
-        if(userEpoch == 0) {
-            userEpoch = 1;
-        }
-
-        IVotingEscrow.Point memory userPoint = voting.user_point_history(smartWallAdd, userEpoch);
-
-        if(weekCursor == 0) {
-            weekCursor = (userPoint.ts + WEEK - 1) / WEEK * WEEK;
-        }
-
-        if(weekCursor >= lastTokenTime) {
-            return (reward, rewardsPresent);
-        }
-
-        if(weekCursor < startTime) {
-            weekCursor = startTime;
-        }
-
-        IVotingEscrow.Point memory oldUserPoint;
-
-        for(uint i = 0; i < 150; i++) {
-            if(weekCursor >= lastTokenTime) {
-                break;
-            }
-
-            if(weekCursor >= userPoint.ts && userEpoch <= maxUserEpoch) {
-                userEpoch++;
-                oldUserPoint = userPoint;
-                if(userEpoch > maxUserEpoch) {
-                    IVotingEscrow.Point memory tmpPoint;
-                    userPoint = tmpPoint;
-                } else {
-                    userPoint = voting.user_point_history(smartWallAdd, userEpoch);
-                }
-            } else {
-                uint balanceOf;
-                {
-                    int128 dt = int128(uint128(weekCursor - oldUserPoint.ts));
-                    int128 res = oldUserPoint.bias - dt * oldUserPoint.slope;
-                    balanceOf = res > 0 ? uint(int256(res)) : 0;
-                }
-                if(balanceOf == 0 && userEpoch > maxUserEpoch) {
-                    break;
-                } 
-                if(balanceOf > 0) {
-                    
-                    reward += balanceOf * distro.tokens_per_week(weekCursor) / distro.ve_supply(weekCursor);
-                    if(reward > 0 && !rewardsPresent) {
-                        rewardsPresent = true;
-                    } 
-                    
-                }
-                weekCursor += WEEK;
-            }
-        }
-
-        return (reward, rewardsPresent);
     }
 
     // Implementation of Binary Search
