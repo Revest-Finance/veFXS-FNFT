@@ -75,6 +75,9 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Fee tracker
     uint private weiFee = 1 ether;
 
+    //% fee when lock token (fee = 1 means 1% of the lock up amount will be taken as fee)
+    uint private fee;
+
     // For tracking if a given contract has approval for token
     mapping (address => mapping (address => bool)) private approvedContracts;
 
@@ -86,14 +89,8 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     /// Mapping for tracking SPIRIT holders whitelist
     mapping (address => bool) public whitelist;
 
-
-
-    //% fee when lock token (fee = 1 means 1% of the lock up amount will be taken as fee)
-    uint public fee;
-
     // FXS contract
     address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
-    address public constant veFXS = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
     address public constant REWARD_TOKEN = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
 
 
@@ -107,13 +104,14 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     bool public whitelistEnabled;
 
     // Initialize the contract with the needed valeus
-    constructor(address _provider, address _vE, address _frxAdmin) {
+    constructor(address _provider, address _vE, address _revestAdmin) {
         addressRegistry = _provider;
         VOTING_ESCROW = _vE;
         TOKEN = IVotingEscrow(_vE).token();
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(REWARD_TOKEN);
         TEMPLATE = address(wallet);
-        ADMIN = _frxAdmin;
+        ADMIN = _revestAdmin;
+        fee = 10;
     }
 
     modifier onlyRevestController() {
@@ -302,6 +300,10 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         weiFee = _fee;
     }
 
+    function setFeePercentage(uint _percentage) external onlyOwner {
+        fee = _percentage;
+    }
+
     function setMetadata(string memory _meta) external onlyOwner {
         METADATA = _meta;
     }
@@ -379,6 +381,10 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
 
     function getFlatWeiFee(address) external view override returns (uint) {
         return weiFee;
+    }
+
+    function getFeePercentage(address) external view returns(uint) {
+        return fee;
     }
 
     function getERC20Fee(address) external pure override returns (uint) {

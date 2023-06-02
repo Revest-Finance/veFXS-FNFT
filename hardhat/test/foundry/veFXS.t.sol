@@ -24,7 +24,6 @@ contract veFXSRevest is Test {
     address public Provider = 0xd2c6eB7527Ab1E188638B86F2c14bbAd5A431d78;
     address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public VOTING_ESCROW = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
-    address public DISTRIBUTOR = 0x18CeF75C2b032D7060e9Cf96F29aDF74a9a17ce6; // check later
     address public veFXSAdmin = 0xB1748C79709f4Ba2Dd82834B8c82D4a505003f27;
     address public revestOwner = 0x801e08919a483ceA4C345b5f8789E506e2624ccf;
 
@@ -45,7 +44,7 @@ contract veFXSRevest is Test {
 
 
     function setUp() public {
-        revestVe  = new RevestVeFXS(Provider, VOTING_ESCROW, DISTRIBUTOR, admin);
+        revestVe  = new RevestVeFXS(Provider, VOTING_ESCROW, admin);
         smartWalletChecker = new SmartWalletWhitelistV2(admin);
         
         hoax(admin, admin);
@@ -76,11 +75,11 @@ contract veFXSRevest is Test {
         //Outline the parameters that will govern the FNFT
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
         uint fee = 1 wei;
-        uint amount = 1e18; //FXS 
+        uint amount = 1.1e18; //FXS 
 
         //Mint the FNFT
         hoax(fxsWhale);
-        FXS.approve(address(revestVe), 1e18);
+        FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
 
@@ -96,24 +95,56 @@ contract veFXSRevest is Test {
      * This test case focus on if when the admin can receive the fee
      */
     function testReceiveFee() public {
-        //Setting up phase
-        //    Outline the parameters that will govern the FNFT
+        //Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
         uint fee = 1 wei;
         uint amount = 1e18; //FXS  
 
+        //balance of admin before the minting the lock
+        console.log("FXS balance of revest admin before minting: ", FXS.balanceOf(address(admin)));
+
         hoax(fxsWhale);
-        FXS.approve(address(revestVe), 1e18);
+        FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
+
+        //Testing
+        console.log("FXS balance of revest admin after minting: ", FXS.balanceOf(address(admin)));
+        assertEq(FXS.balanceOf(address(admin)), 1e17);
     }
 
     /**
      * This test case focus on if user can deposit additional amount into the vault
      */
     function testDepositAdditional() public {
-        console.log("Done!");
+        // Outline the parameters that will govern the FNFT
+        uint time = block.timestamp;
+        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+        uint fee = 1 wei;
+        uint amount = 1e18; //FXS  
+
+        hoax(fxsWhale);
+        FXS.approve(address(revestVe), amount);
+        hoax(fxsWhale);
+        fnftId = revestVe.lockTokens(expiration, amount);
+
+        //Testing Phase
+        console.log("Current veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
+
+
+        uint timeSkip = (1 * 365 * 60 * 60 * 24); // 1 years
+        skip(timeSkip);
+        
+        hoax(fxsWhale);have
+        FXS.approve(address(revest), amount);
+        hoax(fxsWhale);
+        revest.depositAdditionalToFNFT(fnftId, amount, 1);
+
+        console.log("New veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
+
+
+      
     }
 
     /**

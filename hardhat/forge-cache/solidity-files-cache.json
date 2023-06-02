@@ -12,79 +12,9 @@
     ]
   },
   "files": {
-    "contracts/RevestSpiritSwap.sol": {
-      "lastModificationDate": 1685381703217,
-      "contentHash": "8292945a5f460d5f49d90253eafacba6",
-      "sourceName": "contracts/RevestSpiritSwap.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "contracts/SmartWalletWhitelistV2.sol",
-        "contracts/VestedEscrowSmartWallet.sol",
-        "contracts/interfaces/IAddressRegistry.sol",
-        "contracts/interfaces/IDistributor.sol",
-        "contracts/interfaces/IFNFTHandler.sol",
-        "contracts/interfaces/IFeeReporter.sol",
-        "contracts/interfaces/ILockManager.sol",
-        "contracts/interfaces/IOutputReceiver.sol",
-        "contracts/interfaces/IOutputReceiverV2.sol",
-        "contracts/interfaces/IOutputReceiverV3.sol",
-        "contracts/interfaces/IRegistryProvider.sol",
-        "contracts/interfaces/IRevest.sol",
-        "contracts/interfaces/IRewardsHandler.sol",
-        "contracts/interfaces/ITokenVault.sol",
-        "contracts/interfaces/IVotingEscrow.sol",
-        "contracts/lib/RevestHelper.sol",
-        "node_modules/@openzeppelin/contracts/access/Ownable.sol",
-        "node_modules/@openzeppelin/contracts/proxy/Clones.sol",
-        "node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol",
-        "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
-        "node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "node_modules/@openzeppelin/contracts/utils/Address.sol",
-        "node_modules/@openzeppelin/contracts/utils/Context.sol",
-        "node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol",
-        "node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol"
-      ],
-      "versionRequirement": "^0.8.0",
-      "artifacts": {
-        "IWETH": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "RevestSpiritSwap.sol/IWETH.json"
-        },
-        "RevestSpiritSwap": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "RevestSpiritSwap.sol/RevestSpiritSwap.json"
-        }
-      }
-    },
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1685646282590,
-      "contentHash": "34d194d5c8dd1dd2fc900529d4af550c",
+      "lastModificationDate": 1685723563237,
+      "contentHash": "a6b42d85b471428499077789414b8491",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -118,7 +48,6 @@
         "contracts/SmartWalletWhitelistV2.sol",
         "contracts/VestedEscrowSmartWallet.sol",
         "contracts/interfaces/IAddressRegistry.sol",
-        "contracts/interfaces/IDistributor.sol",
         "contracts/interfaces/IFNFTHandler.sol",
         "contracts/interfaces/IFeeReporter.sol",
         "contracts/interfaces/ILockManager.sol",
@@ -199,8 +128,8 @@
       }
     },
     "contracts/VestedEscrowSmartWallet.sol": {
-      "lastModificationDate": 1685629461680,
-      "contentHash": "676a599ebd100218e4e5cfbcc19c115d",
+      "lastModificationDate": 1685720638743,
+      "contentHash": "4c328d4a1214542ab74c3a1be8e48cd2",
       "sourceName": "contracts/VestedEscrowSmartWallet.sol",
       "solcConfig": {
         "settings": {
@@ -231,7 +160,6 @@
         }
       },
       "imports": [
-        "contracts/interfaces/IDistributor.sol",
         "contracts/interfaces/IRegistryProvider.sol",
         "contracts/interfaces/IRewardsHandler.sol",
         "contracts/interfaces/IVotingEscrow.sol",
@@ -244,46 +172,6 @@
       "artifacts": {
         "VestedEscrowSmartWallet": {
           "0.8.20+commit.a1b79de6.Darwin.appleclang": "VestedEscrowSmartWallet.sol/VestedEscrowSmartWallet.json"
-        }
-      }
-    },
-    "contracts/fraxExample.sol": {
-      "lastModificationDate": 1685633207201,
-      "contentHash": "a4c3333c28ca3c463ec941848804cdff",
-      "sourceName": "contracts/fraxExample.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [],
-      "versionRequirement": null,
-      "artifacts": {
-        "fraxExample": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "fraxExample.sol/fraxExample.json"
         }
       }
     },
@@ -1937,8 +1825,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1685717266995,
-      "contentHash": "6614b275753802c619959ad494dd6956",
+      "lastModificationDate": 1685726038493,
+      "contentHash": "b22b7398e1f3c7c6fe46d45106d46ba6",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {
@@ -1973,7 +1861,6 @@
         "contracts/SmartWalletWhitelistV2.sol",
         "contracts/VestedEscrowSmartWallet.sol",
         "contracts/interfaces/IAddressRegistry.sol",
-        "contracts/interfaces/IDistributor.sol",
         "contracts/interfaces/IFNFTHandler.sol",
         "contracts/interfaces/IFeeReporter.sol",
         "contracts/interfaces/ILockManager.sol",
