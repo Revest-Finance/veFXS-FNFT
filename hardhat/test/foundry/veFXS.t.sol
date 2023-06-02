@@ -36,7 +36,7 @@ contract veFXSRevest is Test {
     IVotingEscrow veFXS =  IVotingEscrow(VOTING_ESCROW);
 
     address admin = makeAddr("admin");
-    address fxsWhale = makeAddr("fxsWhale");
+    address fxsWhale = 0xd53E50c63B0D549f142A2dCfc454501aaA5B7f3F;
 
 
     function setUp() public {
@@ -67,25 +67,36 @@ contract veFXSRevest is Test {
         uint time = block.timestamp;
     
         //Outline the parameters that will govern the FNFT
-        uint expiration = time + (4 * 365 * 60 * 60 * 24); // 2 years 
+        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
         uint fee = 1 wei;
         uint amount = 1e18; //FXS 
 
         //Mint the FNFT
-        deal(address(FXS), fxsWhale, 10e18);
         hoax(fxsWhale);
         FXS.approve(address(revestVe), 1e18);
         hoax(fxsWhale);
-
-        //console.log(revestVe.test());
-
-        uint fnftID = revestVe.lockTokens(expiration, amount);
-        console.log(fnftID);
+        uint fnftId = revestVe.lockTokens(expiration, amount);
 
         uint expectedValue = revestVe.getValue(fnftId);
-        console.log("Value should be around 20eth: " + expectedValue);
-        uint smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
-        console.log("SmartWallet add")
+        console.log("veFXS balance should be around 2e18: ", expectedValue);
+        address smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+        console.log("SmartWallet add at address: ", smartWalletAddress);
+    }
+
+    function testReceiveFee() public {
+        console.log("Done!");
+    }
+
+    function testDepositAdditional() public {
+        console.log("Done!");
+    }
+
+    function testExtendLockingPeriod() public {
+        console.log("Done!");
+    }
+
+    function testUnlockAndWithdraw() public {
+        console.log("Done!");
     }
 
     
