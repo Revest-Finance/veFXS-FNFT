@@ -128,11 +128,12 @@ contract veFXSRevest is Test {
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
+        smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
         //Testing Phase
         console.log("Current veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
 
-        destroyAccount(revestVe.getAddressForFNFT(fnftId), admin);
+        destroyAccount(smartWalletAddress, address(admin));
         
         hoax(fxsWhale);
         FXS.approve(address(revest), amount);
@@ -145,7 +146,7 @@ contract veFXSRevest is Test {
       
     }
 
-    /**
+    /**Jos
      * This test case focus on if user can extend the locking period on the vault
      */
     function testExtendLockingPeriod() public {
@@ -167,18 +168,33 @@ contract veFXSRevest is Test {
 
         hoax(fxsWhale);
         revest.extendFNFTMaturity(fnftId, expiration);
-
     }
 
     /**
      * This test case focus on if user can unlock and withdaw their fnft
      */
     function testUnlockAndWithdraw() public {
-        console.log("Done!");
+        uint time = block.timestamp;
+        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+        uint fee = 1 wei;
+        uint amount = 1e18; //FXS  
+
+        hoax(fxsWhale);
+        FXS.approve(address(revestVe), amount);
+        hoax(fxsWhale);
+        fnftId = revestVe.lockTokens(expiration, amount);
+
+        uint oriFXS = FXS.balanceOf(fxsWhale);
+
+        uint timeSkip = (2 * 365 * 60 * 60 * 24 + 1); // 2 week years
+        skip(timeSkip);
+        //Withdrawing the NFT
+
+        hoax(fxsWhale);
+        revest.withdrawFNFT(fnftId, 1);
+        uint currentFXS = FXS.balanceOf(fxsWhale);
+
+        console.log("Original balance of FXS: ", oriFXS);
+        console.log("Current balance of FXS: ", currentFXS;
     }
-
-    
-
-
-
 }
