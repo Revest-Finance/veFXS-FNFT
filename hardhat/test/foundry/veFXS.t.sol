@@ -2,8 +2,6 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-
-
 import "contracts/RevestVeFXS.sol";
 import "contracts/VestedEscrowSmartWallet.sol";
 import "contracts/SmartWalletWhitelistV2.sol";
@@ -101,15 +99,16 @@ contract veFXSRevest is Test {
         uint fee = 1 wei;
         uint amount = 1e18; //FXS  
 
-        //balance of admin before the minting the lock
+        //Balance of admin before the minting the lock
         console.log("FXS balance of revest admin before minting: ", FXS.balanceOf(address(admin)));
 
+        //Minting the FNFT
         hoax(fxsWhale);
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
 
-        //Testing
+        //Value check
         console.log("FXS balance of revest admin after minting: ", FXS.balanceOf(address(admin)));
         assertEq(FXS.balanceOf(address(admin)), 1e17);
     }
@@ -121,9 +120,9 @@ contract veFXSRevest is Test {
         // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-
         uint amount = 1e18; //FXS  
 
+        //Minting the FNFT
         hoax(fxsWhale);
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
@@ -134,13 +133,16 @@ contract veFXSRevest is Test {
         //Testing Phase
         console.log("Current veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
 
+        //Destroy the address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
-        
+
+        //Deposit additional fund for FNFT
         hoax(fxsWhale);
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         revest.depositAdditionalToFNFT(fnftId, amount, 1);
 
+        //Value Check
         console.log("New veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
     }
 
@@ -148,25 +150,31 @@ contract veFXSRevest is Test {
      * This test case focus on if user can extend the locking period on the vault
      */
     function testExtendLockingPeriod() public {
+        // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
         uint fee = 1 wei;
         uint amount = 1e18; //FXS  
 
+        //Minting the FNFT
         hoax(fxsWhale);
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
+        //Skipping two weeks of timestamp
         uint timeSkip = (2 * 7 * 60 * 60 * 24); // 2 week years
         skip(timeSkip);
 
+        //Destroy the address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
 
+        //Calculating expiration time for new extending time
         time = block.timestamp;
         expiration = time + (4 * 365 * 60 * 60 * 24 - 3600); // 4 year in future in future
 
+        //Attempt to extend FNFT Maturity
         hoax(fxsWhale);
         revest.extendFNFTMaturity(fnftId, expiration);
     }
@@ -175,31 +183,38 @@ contract veFXSRevest is Test {
      * This test case focus on if user can unlock and withdaw their fnft
      */
     function testUnlockAndWithdraw() public {
+        // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
         uint fee = 1 wei;
         uint amount = 1e18; //FXS  
 
+        //Minting the FNFT
         hoax(fxsWhale);
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
+        //Original balance of FXS after depositing the FNFT
         uint oriFXS = FXS.balanceOf(fxsWhale);
 
+        //Destroying teh address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
 
+        //Skipping two weeks of timestamp
         uint timeSkip = (2 * 365 * 60 * 60 * 24 + 1); // 2 week years
         skip(timeSkip);
-        //Withdrawing the NFT
-
+        
+         //Destroy the address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
 
+        //Unlocking and withdrawing the NFT
         hoax(fxsWhale);
         revest.withdrawFNFT(fnftId, 1);
         uint currentFXS = FXS.balanceOf(fxsWhale);
 
+        //Value check
         console.log("Original balance of FXS: ", oriFXS);
         console.log("Current balance of FXS: ", currentFXS);
     }

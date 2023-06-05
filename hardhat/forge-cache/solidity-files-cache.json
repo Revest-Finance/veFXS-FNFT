@@ -1952,8 +1952,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1685979081542,
-      "contentHash": "0c8fd8a0b3cb440ae51c83b114bffa35",
+      "lastModificationDate": 1685983723296,
+      "contentHash": "7144372f164eea5c0b22460c2f90f494",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {
