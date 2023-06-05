@@ -121,7 +121,7 @@ contract veFXSRevest is Test {
         // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-        uint fee = 1 wei;
+
         uint amount = 1e18; //FXS  
 
         hoax(fxsWhale);
@@ -129,6 +129,7 @@ contract veFXSRevest is Test {
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+        console.log("SmartWallet add at address: ", smartWalletAddress);
 
         //Testing Phase
         console.log("Current veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
@@ -136,14 +137,11 @@ contract veFXSRevest is Test {
         destroyAccount(smartWalletAddress, address(admin));
         
         hoax(fxsWhale);
-        FXS.approve(address(revest), amount);
+        FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         revest.depositAdditionalToFNFT(fnftId, amount, 1);
 
         console.log("New veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
-
-
-      
     }
 
     /**Jos
@@ -159,12 +157,15 @@ contract veFXSRevest is Test {
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
+        smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
         uint timeSkip = (2 * 7 * 60 * 60 * 24); // 2 week years
         skip(timeSkip);
 
+        destroyAccount(smartWalletAddress, address(admin));
+
         time = block.timestamp;
-        expiration = time + (0.25 * 365 * 60 * 60 * 24 - 3600); // three month in future
+        expiration = time + (4 * 365 * 60 * 60 * 24 - 3600); // 4 year in future in future
 
         hoax(fxsWhale);
         revest.extendFNFTMaturity(fnftId, expiration);
@@ -183,18 +184,23 @@ contract veFXSRevest is Test {
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
+        smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
         uint oriFXS = FXS.balanceOf(fxsWhale);
+
+        destroyAccount(smartWalletAddress, address(admin));
 
         uint timeSkip = (2 * 365 * 60 * 60 * 24 + 1); // 2 week years
         skip(timeSkip);
         //Withdrawing the NFT
+
+        destroyAccount(smartWalletAddress, address(admin));
 
         hoax(fxsWhale);
         revest.withdrawFNFT(fnftId, 1);
         uint currentFXS = FXS.balanceOf(fxsWhale);
 
         console.log("Original balance of FXS: ", oriFXS);
-        console.log("Current balance of FXS: ", currentFXS;
+        console.log("Current balance of FXS: ", currentFXS);
     }
 }
