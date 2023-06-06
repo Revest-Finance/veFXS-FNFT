@@ -10,42 +10,12 @@ module.exports = {
     networks: {
         hardhat: {
             forking: {
-                url: "https://rpc.ftm.tools",
-                blockNumber: 35807000,
+                url: "https://eth-mainnet.g.alchemy.com/v2/zOVFUzSEld1v_MuTOqGPYkTYttwBUrmF",
+                blockNumber: 17277518,
+                blockGasLimit: 100100000,
+                gas: 21000000
             },
         },
-        rinkeby: {
-            url: process.env.RINKEBY,
-            accounts: [process.env.TESTING_PRIVATE]
-
-        },
-        mainnet: {
-            url: process.env.MAINNET ,
-            accounts: [process.env.PRIVATE_KEY],
-            blockGasLimit: 12487794,
-        },
-        matic: {
-            url: process.env.MATIC,
-            accounts: [process.env.PRIVATE_KEY],
-            gasPrice: 1711e9,
-            chainId: 137,
-            blockGasLimit: 12487794
-        },
-        fantom: {
-            url: process.env.FANTOM,
-            accounts: [process.env.PRIVATE_KEY],
-            gasPrice: 170e9,
-            chainId: 250,
-            blockGasLimit: 12487794
-        },
-        avax: {
-            url: "https://api.avax.network/ext/bc/C/rpc",
-            accounts: [process.env.PRIVATE_KEY],
-            gasPrice: 70e9,
-            chainId: 43114,
-            blockGasLimit: 8000000
-        }
-
     },
     solidity: {
         version: "0.8.4",

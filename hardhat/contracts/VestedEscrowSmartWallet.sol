@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GNU-GPL v3.0 or later
 
 import "./interfaces/IVotingEscrow.sol";
-import "./interfaces/IDistributor.sol";
 import "./interfaces/IRewardsHandler.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -24,6 +23,11 @@ contract VestedEscrowSmartWallet {
     uint private constant feeNumerator2 = 2;
 
     uint private constant feeDenominator = 100;
+
+    //Hardcoded for MVP
+    address public constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
+    address public constant veFXS = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
+
 
     constructor(address _rewardToken) {
         MASTER = msg.sender;
@@ -66,29 +70,12 @@ contract VestedEscrowSmartWallet {
     }
 
     function claimRewards(
-        address distributor, 
         address votingEscrow, 
         address caller, 
         address rewards,
-        address spiritAdmin
+        address revestAdmin
     ) external onlyMaster {
-        bool exitFlag;
-        while(!exitFlag) {
-            IDistributor(distributor).claim();
-            exitFlag = IDistributor(distributor).user_epoch_of(address(this)) + 50 >= IVotingEscrow(votingEscrow).user_point_epoch(address(this));
-        }   
-
-        uint bal = IERC20(REWARD_TOKEN).balanceOf(address(this));
-        {
-            uint fee = bal * feeNumerator / feeDenominator;
-            uint fee2 = bal * feeNumerator2 / feeDenominator;
-            bal -= fee;
-            bal -= fee2;
-            IRewardsHandler(rewards).receiveFee(REWARD_TOKEN, fee);
-            IERC20(REWARD_TOKEN).safeTransfer(spiritAdmin, fee2);
-        }
-        IERC20(REWARD_TOKEN).safeTransfer(caller, bal);
-        _cleanMemory();
+        // TODO: Implement
     }
 
     // Proxy function for ease of use and gas-savings
@@ -108,7 +95,6 @@ contract VestedEscrowSmartWallet {
         dataOut = dataTemp;
     }
 
-    /// Credit to doublesharp for the brilliant gas-saving concept
     /// Self-destructing clone pattern
     function cleanMemory() external onlyMaster {
         _cleanMemory();

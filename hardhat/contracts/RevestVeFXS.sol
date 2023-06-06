@@ -11,7 +11,6 @@ import "./interfaces/ILockManager.sol";
 import "./interfaces/IRewardsHandler.sol";
 import "./interfaces/IVotingEscrow.sol";
 import "./interfaces/IFeeReporter.sol";
-import "./interfaces/IDistributor.sol";
 import "./VestedEscrowSmartWallet.sol";
 import "./SmartWalletWhitelistV2.sol";
 
@@ -27,8 +26,8 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 // Libraries
 import "./lib/RevestHelper.sol";
 
-interface IWETH {
-    function deposit() external payable;
+interface veFrax {
+    function create_lock(uint256 _value, uint256 _unlock_time) external;
 }
 
 /**
@@ -36,7 +35,7 @@ interface IWETH {
  * @author RobAnon
  * @dev 
  */
-contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, ReentrancyGuard {
+contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, ReentrancyGuard {
     
     using SafeERC20 for IERC20;
 
@@ -49,14 +48,10 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
     // Token used for voting escrow
     address public immutable TOKEN;
 
-    // Distributor for rewards address
-    address public DISTRIBUTOR;
-
-    // NFT Garage Admin Account 
+    // Revest Admin Account 
     address public ADMIN;
 
-    // SPIRIT token    
-    address public constant REWARD_TOKEN = 0x5Cc61A78F164885776AA610fb0FE1257df78E59B;
+   
 
     // Template address for VE wallets
     address public immutable TEMPLATE;
@@ -76,6 +71,9 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
     // Fee tracker
     uint private weiFee = 1 ether;
 
+    //% fee when lock token (fee = 1 means 1% of the lock up amount will be taken as fee)
+    uint private fee;
+
     // For tracking if a given contract has approval for token
     mapping (address => mapping (address => bool)) private approvedContracts;
 
@@ -83,32 +81,24 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
     // Works for up to 256 tokens
     mapping (address => mapping (uint => uint)) private walletApprovals;
 
-
-    /// Mapping for tracking SPIRIT holders whitelist
-    mapping (address => bool) public whitelist;
-
-    // WFTM contract
-    address private constant WFTM = 0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83;
-
-
+    // FXS contract
+    address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
+    address public constant REWARD_TOKEN = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
     // Control variable to let all users utilize smart wallets for proxy execution
     bool public globalProxyEnabled;
 
     // Control variable to enable a given FNFT to utilize their smart wallet for proxy execution
     mapping (uint => bool) public proxyEnabled;
 
-    // Control variable to enable the whitelist or disable it
-    bool public whitelistEnabled;
-
     // Initialize the contract with the needed valeus
-    constructor(address _provider, address _vE, address _distro, address _spiritAdmin) {
+    constructor(address _provider, address _vE, address _revestAdmin) {
         addressRegistry = _provider;
         VOTING_ESCROW = _vE;
         TOKEN = IVotingEscrow(_vE).token();
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(REWARD_TOKEN);
         TEMPLATE = address(wallet);
-        DISTRIBUTOR = _distro;
-        ADMIN = _spiritAdmin;
+        ADMIN = _revestAdmin;
+        fee = 10;
     }
 
     modifier onlyRevestController() {
@@ -132,27 +122,15 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
     }
 
 
-    function lockSpiritSwapTokens(
+    //TODO: charge the amount of veFXS
+    function lockTokens(
         uint endTime,
-        uint amountToLock,
-        bool useWhitelist
-    ) external payable nonReentrant returns (uint fnftId) {    
-        require(msg.value >= weiFee, 'Insufficient fee!');
-        require(!useWhitelist || (whitelistEnabled && whitelist[msg.sender]), '!whitelisted');
-
-        // Immediately remove sender from whitelist to follow checks-effects-interactions
-        if(useWhitelist) {
-            whitelist[msg.sender] = false;
-        }
-
-        // Pay fee: this is dependent on this contract being whitelisted to allow it to pay
-        // nothing via the typical method
-        // Pay fee to SPIRIT ADMIN
-        {
-            uint wftmFee = msg.value;
-            IWETH(WFTM).deposit{value: msg.value}();
-            IERC20(WFTM).safeTransfer(ADMIN, wftmFee);
-        }
+        uint amountToLock
+    ) external nonReentrant returns (uint fnftId) {   
+        //charging fee as FXS token
+        uint FXSFee = amountToLock * fee / 100; // Make constant
+        IERC20(FXS).safeTransferFrom(msg.sender, ADMIN, FXSFee);
+        amountToLock -= FXSFee;
 
         /// Mint FNFT
         {
@@ -188,12 +166,7 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
             VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
 
             // Transfer the tokens from the user to the smart wallet
-            if(useWhitelist) {
-                amountToLock = FREE_AMOUNT;
-                IERC20(TOKEN).safeTransfer(smartWallAdd, amountToLock);
-            } else {
-                IERC20(TOKEN).safeTransferFrom(msg.sender, smartWallAdd, amountToLock);
-            }
+            IERC20(TOKEN).safeTransferFrom(msg.sender, smartWallAdd, amountToLock);
 
             // We use our admin powers on SmartWalletWhitelistV2 to approve the newly created smart wallet
             SmartWalletWhitelistV2(IVotingEscrow(VOTING_ESCROW).smart_wallet_checker()).approveWallet(smartWallAdd);
@@ -205,7 +178,7 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
     }
 
 
-    function receiveRevestOutput(
+     function receiveRevestOutput(
         uint fnftId,
         address,
         address payable owner,
@@ -266,20 +239,7 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
         uint fnftId,
         bytes memory
     ) external override onlyTokenHolder(fnftId) {
-        address rewardsAdd = IAddressRegistry(addressRegistry).getRewardsHandler();
-        address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
-        VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
-        { 
-            // Want this to be re-run if we change fee distributors or rewards handlers
-            address virtualAdd = address(uint160(uint256(keccak256(abi.encodePacked(DISTRIBUTOR, rewardsAdd)))));
-            if(!_isApproved(smartWallAdd, virtualAdd)) {
-                address[] memory addrArray = new address[](1);
-                addrArray[0] = REWARD_TOKEN;
-                wallet.proxyApproveAll(addrArray, rewardsAdd);
-                _setIsApproved(smartWallAdd, virtualAdd, true);
-            }
-        }
-        wallet.claimRewards(DISTRIBUTOR, VOTING_ESCROW, msg.sender, rewardsAdd, ADMIN);
+        
     }       
 
     function proxyExecute(
@@ -317,17 +277,17 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
     function setAddressRegistry(address addressRegistry_) external override onlyOwner {
         addressRegistry = addressRegistry_;
     }
-
-    function setDistributor(address _distro) external onlyOwner {
-        DISTRIBUTOR = _distro;
-    }
-
-    function setSpiritAdmin(address _admin) external onlyOwner {
+    
+    function setFrxAdmin(address _admin) external onlyOwner {
         ADMIN = _admin;
     }
 
     function setWeiFee(uint _fee) external onlyOwner {
         weiFee = _fee;
+    }
+
+    function setFeePercentage(uint _percentage) external onlyOwner {
+        fee = _percentage;
     }
 
     function setMetadata(string memory _meta) external onlyOwner {
@@ -354,17 +314,6 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
         IERC20(token).safeTransfer(msg.sender, amount);
     }
 
-    /// Can both add to and remove from the whitelist, depending on the value of bool
-    function batchModifyWhitelist(address[] memory holders, bool addToWhitelist) external onlyOwner {
-        for(uint i = 0; i < holders.length; i++) {
-            whitelist[holders[i]] = addToWhitelist;
-        }
-    }
-
-    function setWhitelistActive(bool _enableWhitelist) external onlyOwner {
-        whitelistEnabled = _enableWhitelist;
-    }
-
     /// View Functions
 
     function getCustomMetadata(uint) external view override returns (string memory) {
@@ -382,17 +331,19 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
     }
 
     function getOutputDisplayValues(uint fnftId) external view override returns (bytes memory displayData) {
-        (uint reward, bool hasRewards) = getRewardsForFNFT(fnftId);
-        string memory rewardsDesc;
-        if(hasRewards) {
-            string memory par1 = string(abi.encodePacked(RevestHelper.getName(REWARD_TOKEN),": "));
-            string memory par2 = string(abi.encodePacked(RevestHelper.amountToDecimal(reward, REWARD_TOKEN), " [", RevestHelper.getTicker(REWARD_TOKEN), "] Tokens Available"));
-            rewardsDesc = string(abi.encodePacked(par1, par2));
-        }
-        address smartWallet = getAddressForFNFT(fnftId);
-        uint maxExtension = block.timestamp / (1 weeks) * (1 weeks) + MAX_LOCKUP; //Ensures no confusion with time zones and date-selectors
-        (int128 spiritBalance, ) = IVotingEscrow(VOTING_ESCROW).locked(smartWallet);
-        displayData = abi.encode(smartWallet, rewardsDesc, hasRewards, maxExtension, TOKEN, spiritBalance);
+        //TODO: IMPLEMENT
+
+        // (uint reward, bool hasRewards) = getRewardsForFNFT(fnftId);
+        // string memory rewardsDesc;
+        // if(hasRewards) {
+        //     string memory par1 = string(abi.encodePacked(RevestHelper.getName(REWARD_TOKEN),": "));
+        //     string memory par2 = string(abi.encodePacked(RevestHelper.amountToDecimal(reward, REWARD_TOKEN), " [", RevestHelper.getTicker(REWARD_TOKEN), "] Tokens Available"));
+        //     rewardsDesc = string(abi.encodePacked(par1, par2));
+        // }
+        // address smartWallet = getAddressForFNFT(fnftId);
+        // uint maxExtension = block.timestamp / (1 weeks) * (1 weeks) + MAX_LOCKUP; //Ensures no confusion with time zones and date-selectors
+        // (int128 spiritBalance, ) = IVotingEscrow(VOTING_ESCROW).locked(smartWallet);
+        // displayData = abi.encode(smartWallet, rewardsDesc, hasRewards, maxExtension, TOKEN, spiritBalance);
     }
 
     function getAddressRegistry() external view override returns (address) {
@@ -407,114 +358,12 @@ contract RevestSpiritSwap is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, R
         return weiFee;
     }
 
-    function getERC20Fee(address) external pure override returns (uint) {
-        return 0;
+    function getERC20Fee(address) external view override returns (uint) {
+        return fee;
     }
 
     function getAddressForFNFT(uint fnftId) public view returns (address smartWallAdd) {
         smartWallAdd = Clones.predictDeterministicAddress(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
-    }
-
-    // Find rewards for a given smart wallet using the Curve formulae
-    function getRewardsForFNFT(uint fnftId) private view returns (uint reward, bool rewardsPresent) {
-        uint userEpoch;
-        IDistributor distro = IDistributor(DISTRIBUTOR);
-        IVotingEscrow voting = IVotingEscrow(VOTING_ESCROW);
-        address smartWallAdd = getAddressForFNFT(fnftId);
-        
-        uint lastTokenTime = distro.last_token_time();
-        lastTokenTime = lastTokenTime / WEEK * WEEK;
-
-        uint maxUserEpoch = voting.user_point_epoch(smartWallAdd);
-        uint startTime = distro.start_time();
-        
-        if(maxUserEpoch == 0) {
-            return (reward, rewardsPresent);
-        }
-
-        uint weekCursor = distro.time_cursor_of(smartWallAdd);
-        if(weekCursor == 0) {
-            userEpoch = findTimestampUserEpoch(smartWallAdd, startTime, maxUserEpoch);
-        } else {
-            userEpoch = distro.user_epoch_of(smartWallAdd);
-        }
-
-        if(userEpoch == 0) {
-            userEpoch = 1;
-        }
-
-        IVotingEscrow.Point memory userPoint = voting.user_point_history(smartWallAdd, userEpoch);
-
-        if(weekCursor == 0) {
-            weekCursor = (userPoint.ts + WEEK - 1) / WEEK * WEEK;
-        }
-
-        if(weekCursor >= lastTokenTime) {
-            return (reward, rewardsPresent);
-        }
-
-        if(weekCursor < startTime) {
-            weekCursor = startTime;
-        }
-
-        IVotingEscrow.Point memory oldUserPoint;
-
-        for(uint i = 0; i < 150; i++) {
-            if(weekCursor >= lastTokenTime) {
-                break;
-            }
-
-            if(weekCursor >= userPoint.ts && userEpoch <= maxUserEpoch) {
-                userEpoch++;
-                oldUserPoint = userPoint;
-                if(userEpoch > maxUserEpoch) {
-                    IVotingEscrow.Point memory tmpPoint;
-                    userPoint = tmpPoint;
-                } else {
-                    userPoint = voting.user_point_history(smartWallAdd, userEpoch);
-                }
-            } else {
-                uint balanceOf;
-                {
-                    int128 dt = int128(uint128(weekCursor - oldUserPoint.ts));
-                    int128 res = oldUserPoint.bias - dt * oldUserPoint.slope;
-                    balanceOf = res > 0 ? uint(int256(res)) : 0;
-                }
-                if(balanceOf == 0 && userEpoch > maxUserEpoch) {
-                    break;
-                } 
-                if(balanceOf > 0) {
-                    
-                    reward += balanceOf * distro.tokens_per_week(weekCursor) / distro.ve_supply(weekCursor);
-                    if(reward > 0 && !rewardsPresent) {
-                        rewardsPresent = true;
-                    } 
-                    
-                }
-                weekCursor += WEEK;
-            }
-        }
-
-        return (reward, rewardsPresent);
-    }
-
-    // Implementation of Binary Search
-    function findTimestampUserEpoch(address user, uint timestamp, uint maxUserEpoch) private view returns (uint timestampEpoch) {
-        uint min;
-        uint max = maxUserEpoch;
-        for(uint i = 0; i < 128; i++) {
-            if(min >= max) {
-                break;
-            }
-            uint mid = (min + max + 2) / 2;
-            uint ts = IVotingEscrow(VOTING_ESCROW).user_point_history(user, mid).ts;
-            if(ts <= timestamp) {
-                min = mid;
-            } else {
-                max = mid - 1;
-            }
-        }
-        return min;
     }
 
     
