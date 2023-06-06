@@ -68,6 +68,8 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
 
     uint private constant FREE_AMOUNT = 100 ether;
 
+    uint private constant PERCENTAGE = 100;
+
     // Fee tracker
     uint private weiFee = 1 ether;
 
@@ -128,7 +130,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint amountToLock
     ) external nonReentrant returns (uint fnftId) {   
         //charging fee as FXS token
-        uint FXSFee = amountToLock * fee / 100; // Make constant
+        uint FXSFee = amountToLock * fee / PERCENTAGE; // Make constant
         IERC20(FXS).safeTransferFrom(msg.sender, ADMIN, FXSFee);
         amountToLock -= FXSFee;
 
