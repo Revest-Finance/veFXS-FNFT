@@ -75,7 +75,7 @@ contract VestedEscrowSmartWallet {
         address rewards,
         address revestAdmin
     ) external onlyMaster {
-        //No reward to claim
+        // TODO: Implement
     }
 
     // Proxy function for ease of use and gas-savings
@@ -95,7 +95,6 @@ contract VestedEscrowSmartWallet {
         dataOut = dataTemp;
     }
 
-    /// Credit to doublesharp for the brilliant gas-saving concept
     /// Self-destructing clone pattern
     function cleanMemory() external onlyMaster {
         _cleanMemory();

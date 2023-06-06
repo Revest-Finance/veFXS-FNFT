@@ -26,10 +26,6 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 // Libraries
 import "./lib/RevestHelper.sol";
 
-interface IWETH {
-    function deposit() external payable;
-}
-
 interface veFrax {
     function create_lock(uint256 _value, uint256 _unlock_time) external;
 }
@@ -85,23 +81,14 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Works for up to 256 tokens
     mapping (address => mapping (uint => uint)) private walletApprovals;
 
-
-    /// Mapping for tracking SPIRIT holders whitelist
-    mapping (address => bool) public whitelist;
-
     // FXS contract
     address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
     address public constant REWARD_TOKEN = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
-
-
     // Control variable to let all users utilize smart wallets for proxy execution
     bool public globalProxyEnabled;
 
     // Control variable to enable a given FNFT to utilize their smart wallet for proxy execution
     mapping (uint => bool) public proxyEnabled;
-
-    // Control variable to enable the whitelist or disable it
-    bool public whitelistEnabled;
 
     // Initialize the contract with the needed valeus
     constructor(address _provider, address _vE, address _revestAdmin) {
@@ -136,15 +123,14 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
 
 
     //TODO: charge the amount of veFXS
-
     function lockTokens(
         uint endTime,
         uint amountToLock
-    ) external payable nonReentrant returns (uint fnftId) {   
+    ) external nonReentrant returns (uint fnftId) {   
         //charging fee as FXS token
-        uint FXSFee = amountToLock * fee / 100;
+        uint FXSFee = amountToLock * fee / 100; // Make constant
         IERC20(FXS).safeTransferFrom(msg.sender, ADMIN, FXSFee);
-        amountToLock = amountToLock - FXSFee;
+        amountToLock -= FXSFee;
 
         /// Mint FNFT
         {
@@ -328,17 +314,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         IERC20(token).safeTransfer(msg.sender, amount);
     }
 
-    /// Can both add to and remove from the whitelist, depending on the value of bool
-    function batchModifyWhitelist(address[] memory holders, bool addToWhitelist) external onlyOwner {
-        for(uint i = 0; i < holders.length; i++) {
-            whitelist[holders[i]] = addToWhitelist;
-        }
-    }
-
-    function setWhitelistActive(bool _enableWhitelist) external onlyOwner {
-        whitelistEnabled = _enableWhitelist;
-    }
-
     /// View Functions
 
     function getCustomMetadata(uint) external view override returns (string memory) {
@@ -356,7 +331,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     }
 
     function getOutputDisplayValues(uint fnftId) external view override returns (bytes memory displayData) {
-        //TODO: add later
+        //TODO: IMPLEMENT
 
         // (uint reward, bool hasRewards) = getRewardsForFNFT(fnftId);
         // string memory rewardsDesc;
@@ -383,35 +358,12 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         return weiFee;
     }
 
-    function getFeePercentage(address) external view returns(uint) {
+    function getERC20Fee(address) external view override returns (uint) {
         return fee;
-    }
-
-    function getERC20Fee(address) external pure override returns (uint) {
-        return 0;
     }
 
     function getAddressForFNFT(uint fnftId) public view returns (address smartWallAdd) {
         smartWallAdd = Clones.predictDeterministicAddress(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
-    }
-
-    // Implementation of Binary Search
-    function findTimestampUserEpoch(address user, uint timestamp, uint maxUserEpoch) private view returns (uint timestampEpoch) {
-        uint min;
-        uint max = maxUserEpoch;
-        for(uint i = 0; i < 128; i++) {
-            if(min >= max) {
-                break;
-            }
-            uint mid = (min + max + 2) / 2;
-            uint ts = IVotingEscrow(VOTING_ESCROW).user_point_history(user, mid).ts;
-            if(ts <= timestamp) {
-                min = mid;
-            } else {
-                max = mid - 1;
-            }
-        }
-        return min;
     }
 
     
