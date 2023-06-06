@@ -24,6 +24,7 @@ contract veFXSRevest is Test {
     address public VOTING_ESCROW = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
     address public veFXSAdmin = 0xB1748C79709f4Ba2Dd82834B8c82D4a505003f27;
     address public revestOwner = 0x801e08919a483ceA4C345b5f8789E506e2624ccf;
+    address public DISTRIBUTOR = 0xc6764e58b36e26b08Fd1d2AeD4538c02171fA872;
 
     Revest revest = Revest(0x9f551F75DB1c301236496A2b4F7CeCb2d1B2b242);
     ERC20 FXS = ERC20(0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0);
@@ -42,7 +43,7 @@ contract veFXSRevest is Test {
 
 
     function setUp() public {
-        revestVe  = new RevestVeFXS(Provider, VOTING_ESCROW, admin);
+        revestVe  = new RevestVeFXS(Provider, VOTING_ESCROW, DISTRIBUTOR, admin);
         smartWalletChecker = new SmartWalletWhitelistV2(admin);
         
         hoax(admin, admin);

@@ -31,8 +31,9 @@ interface veFrax {
 }
 
 /**
- * @title SpiritSwap <> Revest integration for tokenizing inSPIRIT positions
+ * @title Revest FNFT for veFXS 
  * @author RobAnon
+ * @author Ekkila
  * @dev 
  */
 contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, ReentrancyGuard {
@@ -47,6 +48,9 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
 
     // Token used for voting escrow
     address public immutable TOKEN;
+
+    // Distributor for rewards address
+    address public DISTRIBUTOR;
 
     // Revest Admin Account 
     address public ADMIN;
@@ -93,10 +97,11 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     mapping (uint => bool) public proxyEnabled;
 
     // Initialize the contract with the needed valeus
-    constructor(address _provider, address _vE, address _revestAdmin) {
+    constructor(address _provider, address _vE, address _distributor, address _revestAdmin) {
         addressRegistry = _provider;
         VOTING_ESCROW = _vE;
         TOKEN = IVotingEscrow(_vE).token();
+        DISTRIBUTOR = _distributor;
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(REWARD_TOKEN);
         TEMPLATE = address(wallet);
         ADMIN = _revestAdmin;
@@ -241,7 +246,9 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint fnftId,
         bytes memory
     ) external override onlyTokenHolder(fnftId) {
-        
+        address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
+        VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
+        wallet.claimRewards(VOTING_ESCROW, DISTRIBUTOR);
     }       
 
     function proxyExecute(

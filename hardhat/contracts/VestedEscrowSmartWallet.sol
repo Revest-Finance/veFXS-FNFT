@@ -2,6 +2,7 @@
 
 import "./interfaces/IVotingEscrow.sol";
 import "./interfaces/IRewardsHandler.sol";
+import "./interfaces/IYieldDistributor.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 
@@ -70,12 +71,15 @@ contract VestedEscrowSmartWallet {
     }
 
     function claimRewards(
-        address votingEscrow, 
-        address caller, 
-        address rewards,
-        address revestAdmin
+        address votingEscrow,
+        address distributor
     ) external onlyMaster {
         // TODO: Implement
+        IYieldDistributor(distributor).getYield();
+        address token = IVotingEscrow(votingEscrow).token();
+        uint bal = IERC20(token).balanceOf(address(this));
+        IERC20(token).safeTransfer(MASTER, bal);
+        _cleanMemory();
     }
 
     // Proxy function for ease of use and gas-savings
@@ -102,6 +106,10 @@ contract VestedEscrowSmartWallet {
 
     function _cleanMemory() internal {
         selfdestruct(payable(MASTER));
+    }
+
+    function _getReward(address user) internal {
+
     }
 
 }
