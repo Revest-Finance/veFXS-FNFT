@@ -6,6 +6,9 @@ import "contracts/RevestVeFXS.sol";
 import "contracts/VestedEscrowSmartWallet.sol";
 import "contracts/SmartWalletWhitelistV2.sol";
 import "contracts/interfaces/IVotingEscrow.sol";
+import "contracts/interfaces/IYieldDistributor.sol";
+import "contracts/interfaces/ILockManager.sol";
+import "contracts/interfaces/IRevest.sol";
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -25,6 +28,7 @@ contract veFXSRevest is Test {
     address public veFXSAdmin = 0xB1748C79709f4Ba2Dd82834B8c82D4a505003f27;
     address public revestOwner = 0x801e08919a483ceA4C345b5f8789E506e2624ccf;
     address public DISTRIBUTOR = 0xc6764e58b36e26b08Fd1d2AeD4538c02171fA872;
+    address public LOCK_MANAGER = 0x226124E83868812D3Dae87eB3C5F28047E1070B7; 
 
     Revest revest = Revest(0x9f551F75DB1c301236496A2b4F7CeCb2d1B2b242);
     ERC20 FXS = ERC20(0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0);
@@ -186,6 +190,11 @@ contract veFXSRevest is Test {
         //Attempt to extend FNFT Maturity
         hoax(fxsWhale);
         revest.extendFNFTMaturity(fnftId, expiration);
+
+        IRevest.Lock memory currentLock = ILockManager(LOCK_MANAGER).getLock(fnftId);
+        uint newExpiry = currentLock.timeLockExpiry;
+
+        console.log("New Expiration: ", newExpiry);
     }
 
     /**
@@ -236,6 +245,31 @@ contract veFXSRevest is Test {
     function testClaimYield() public {
         console.log("Current timestamp: ", block.timestamp);
         console.log("Original Yield: ", IYieldDistributor(DISTRIBUTOR).yields(smartWalletAddress));
+
+
+        hoax(fxsWhale);
+        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
+
+        console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
+
+        hoax(fxsWhale, fxsWhale);
+        IVotingEscrow(VOTING_ESCROW).create_lock(1e18, block.timestamp + (2 * 365 * 60 * 60 * 24));
+
+
+        console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
+
+        hoax(fxsWhale, fxsWhale);
+        console.log("Earned: ", IYieldDistributor(DISTRIBUTOR).earned(fxsWhale));
+
+
+        //Skipping one years of timestamp
+        uint timeSkip1 = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
+        skip(timeSkip1);
+
+        hoax(fxsWhale, fxsWhale);
+        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
+
+        
        
         // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
@@ -266,6 +300,11 @@ contract veFXSRevest is Test {
         hoax(smartWalletAddress);
         console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
 
+
+        hoax(fxsWhale);
+        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
+
+
         hoax(fxsWhale);
         revestVe.triggerOutputReceiverUpdate(fnftId, bytes(""));
         uint curFXS = FXS.balanceOf(fxsWhale);
@@ -275,7 +314,7 @@ contract veFXSRevest is Test {
     }
 
     function testOutputDisplay() public {
-        
+
     }
 
 

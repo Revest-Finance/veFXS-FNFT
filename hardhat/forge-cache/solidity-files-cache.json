@@ -719,8 +719,8 @@
       }
     },
     "contracts/interfaces/IYieldDistributor.sol": {
-      "lastModificationDate": 1686152976476,
-      "contentHash": "79492cfb5bf1a5aa2216b2d0628b6f1e",
+      "lastModificationDate": 1686166206195,
+      "contentHash": "b7c01726615aaa1a1612cc3cdf34eb9c",
       "sourceName": "contracts/interfaces/IYieldDistributor.sol",
       "solcConfig": {
         "settings": {
@@ -1991,8 +1991,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1686159238384,
-      "contentHash": "2ee221c40ee0ed96a2114a11786a7879",
+      "lastModificationDate": 1686166985907,
+      "contentHash": "e23e024c61750ce1f4a96aa6527b91d1",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {
