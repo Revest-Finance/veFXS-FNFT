@@ -274,5 +274,9 @@ contract veFXSRevest is Test {
         console.log("Current balance of FXS: ", curFXS);
     }
 
+    function testOutputDisplay() public {
+        
+    }
+
 
 }

@@ -1,6 +1,6 @@
 {
-    "name":"Revest Spirit Swap Integration",
-    "description":"Allows locking SPIRIT into inSPIRIT with liquid positions",
+    "name":"Revest VeFXS Integration",
+    "description":"Allows locking FXS into veFXS",
     "front_display": [
         {
             "label":"Rewards available!",
