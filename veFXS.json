@@ -44,7 +44,7 @@
             "index":4
         },
         {
-            "label":"SPIRIT Balance",
+            "label":"FXS Locked Balance",
             "encode":"int128",
             "primitive":"integer",
             "extra_data":{
