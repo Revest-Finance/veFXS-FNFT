@@ -55,8 +55,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Revest Admin Account 
     address public ADMIN;
 
-   
-
     // Template address for VE wallets
     address public immutable TEMPLATE;
 
@@ -89,7 +87,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
 
     // FXS contract
     address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
-    address public constant REWARD_TOKEN = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
+    address public constant REWARD_TOKEN = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0; //the same with deposit token
     // Control variable to let all users utilize smart wallets for proxy execution
     bool public globalProxyEnabled;
 
@@ -342,18 +340,26 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     function getOutputDisplayValues(uint fnftId) external view override returns (bytes memory displayData) {
         //TODO: IMPLEMENT
 
-        // (uint reward, bool hasRewards) = getRewardsForFNFT(fnftId);
-        // string memory rewardsDesc;
-        // if(hasRewards) {
-        //     string memory par1 = string(abi.encodePacked(RevestHelper.getName(REWARD_TOKEN),": "));
-        //     string memory par2 = string(abi.encodePacked(RevestHelper.amountToDecimal(reward, REWARD_TOKEN), " [", RevestHelper.getTicker(REWARD_TOKEN), "] Tokens Available"));
-        //     rewardsDesc = string(abi.encodePacked(par1, par2));
-        // }
-        // address smartWallet = getAddressForFNFT(fnftId);
-        // uint maxExtension = block.timestamp / (1 weeks) * (1 weeks) + MAX_LOCKUP; //Ensures no confusion with time zones and date-selectors
-        // (int128 spiritBalance, ) = IVotingEscrow(VOTING_ESCROW).locked(smartWallet);
-        // displayData = abi.encode(smartWallet, rewardsDesc, hasRewards, maxExtension, TOKEN, spiritBalance);
+        //calculate yield output for certain FNFT 
+        uint yield = IYieldDistributor(DISTRIBUTOR).yields(address(this));
+
+        bool hasRewards =  (yield > 0) ? true : false;
+
+        //Making string to output
+        string memory rewardsDesc;
+        if(hasRewards) {
+            string memory par1 = string(abi.encodePacked(RevestHelper.getName(REWARD_TOKEN),": "));
+            string memory par2 = string(abi.encodePacked(RevestHelper.amountToDecimal(yield, REWARD_TOKEN), " [", RevestHelper.getTicker(REWARD_TOKEN), "] Tokens Available"));
+            rewardsDesc = string(abi.encodePacked(par1, par2));
+        }
+
+        address smartWallet = getAddressForFNFT(fnftId);
+        uint maxExtension = block.timestamp / (1 weeks) * (1 weeks) + MAX_LOCKUP; //Ensures no confusion with time zones and date-selectors
+        (int128 lockedBalance, ) = IVotingEscrow(VOTING_ESCROW).locked(smartWallet);
+        displayData = abi.encode(smartWallet, rewardsDesc, hasRewards, maxExtension, TOKEN, lockedBalance);
     }
+
+    
 
     function getAddressRegistry() external view override returns (address) {
         return addressRegistry;

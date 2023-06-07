@@ -5,6 +5,10 @@ pragma solidity >=0.8.0;
 
 interface IYieldDistributor {
 
+   
+
     function getYield() external returns (uint256 yield0);
+
+    function yields(address) external view returns (uint256 yield0);
 
 }

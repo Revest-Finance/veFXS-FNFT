@@ -219,4 +219,52 @@ contract veFXSRevest is Test {
         console.log("Original balance of FXS: ", oriFXS);
         console.log("Current balance of FXS: ", currentFXS);
     }
+
+    /**
+     * This test case focus on if user can receive yield from their fnft
+     */
+    function testClaimYield() public {
+        // Outline the parameters that will govern the FNFT
+        uint time = block.timestamp;
+        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+        uint fee = 1 wei;
+        uint amount = 1e18; //FXS  
+
+        //Minting the FNFT
+        hoax(fxsWhale);
+        FXS.approve(address(revestVe), amount);
+        hoax(fxsWhale);
+        fnftId = revestVe.lockTokens(expiration, amount);
+        smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+
+        //Original balance of FXS after depositing the FNFT
+        uint oriFXS = FXS.balanceOf(fxsWhale);
+
+        //Skipping two weeks of timestamp
+        uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); // 1 week years
+        skip(timeSkip);
+
+        //Destroy the address of smart wallet for testing purpose
+        destroyAccount(smartWalletAddress, address(admin));
+
+        console.log("Earned: ")
+
+
+        //Value check
+        hoax(fxsWhale);
+        revestVe.triggerOutputReceiverUpdate(fnftId, bytes(""));
+        uint curFXS = FXS.balanceOf(fxsWhale);
+
+
+        
+        console.log("Original balance of FXS: ", oriFXS);
+        console.log("Current balance of FXS: ", curFXS);
+        
+
+
+
+
+    }
+
+
 }

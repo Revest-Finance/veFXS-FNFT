@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1685723563237,
-      "contentHash": "a6b42d85b471428499077789414b8491",
+      "lastModificationDate": 1686152159688,
+      "contentHash": "1c4a7d68791227db366243c2faf32e46",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -59,6 +59,7 @@
         "contracts/interfaces/IRewardsHandler.sol",
         "contracts/interfaces/ITokenVault.sol",
         "contracts/interfaces/IVotingEscrow.sol",
+        "contracts/interfaces/IYieldDistributor.sol",
         "contracts/lib/RevestHelper.sol",
         "node_modules/@openzeppelin/contracts/access/Ownable.sol",
         "node_modules/@openzeppelin/contracts/proxy/Clones.sol",
@@ -73,9 +74,6 @@
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
-        "IWETH": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "RevestVeFXS.sol/IWETH.json"
-        },
         "RevestVeFXS": {
           "0.8.20+commit.a1b79de6.Darwin.appleclang": "RevestVeFXS.sol/RevestVeFXS.json"
         },
@@ -128,8 +126,8 @@
       }
     },
     "contracts/VestedEscrowSmartWallet.sol": {
-      "lastModificationDate": 1685720638743,
-      "contentHash": "4c328d4a1214542ab74c3a1be8e48cd2",
+      "lastModificationDate": 1686080375063,
+      "contentHash": "91c419570dfc6c51c2cf9e08eda55df0",
       "sourceName": "contracts/VestedEscrowSmartWallet.sol",
       "solcConfig": {
         "settings": {
@@ -163,6 +161,7 @@
         "contracts/interfaces/IRegistryProvider.sol",
         "contracts/interfaces/IRewardsHandler.sol",
         "contracts/interfaces/IVotingEscrow.sol",
+        "contracts/interfaces/IYieldDistributor.sol",
         "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
         "node_modules/@openzeppelin/contracts/utils/Address.sol",
@@ -716,6 +715,46 @@
       "artifacts": {
         "IVotingEscrow": {
           "0.8.20+commit.a1b79de6.Darwin.appleclang": "IVotingEscrow.sol/IVotingEscrow.json"
+        }
+      }
+    },
+    "contracts/interfaces/IYieldDistributor.sol": {
+      "lastModificationDate": 1686079253194,
+      "contentHash": "6e5a7d305081ac87818bac0340819e8c",
+      "sourceName": "contracts/interfaces/IYieldDistributor.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "IYieldDistributor": {
+          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IYieldDistributor.sol/IYieldDistributor.json"
         }
       }
     },
@@ -1952,8 +1991,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1685983723296,
-      "contentHash": "7144372f164eea5c0b22460c2f90f494",
+      "lastModificationDate": 1686152189075,
+      "contentHash": "112af3cfac7497753f4ab09d26e3e1bd",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {
@@ -1999,6 +2038,7 @@
         "contracts/interfaces/IRewardsHandler.sol",
         "contracts/interfaces/ITokenVault.sol",
         "contracts/interfaces/IVotingEscrow.sol",
+        "contracts/interfaces/IYieldDistributor.sol",
         "contracts/lib/RevestHelper.sol",
         "lib/forge-std/lib/ds-test/src/test.sol",
         "lib/forge-std/src/Base.sol",
