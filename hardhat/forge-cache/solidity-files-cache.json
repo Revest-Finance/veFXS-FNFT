@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1686233164506,
-      "contentHash": "06093b7d26297a30a937871e81f2bed3",
+      "lastModificationDate": 1686239276280,
+      "contentHash": "4b956eeabe662372042e83a6cb22994e",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -126,8 +126,8 @@
       }
     },
     "contracts/VestedEscrowSmartWallet.sol": {
-      "lastModificationDate": 1686233146511,
-      "contentHash": "0f4340f1e7ebd4222954c9d22b0d3797",
+      "lastModificationDate": 1686239232138,
+      "contentHash": "a0e023c4cbccf5c9ab7cfb8b715cb244",
       "sourceName": "contracts/VestedEscrowSmartWallet.sol",
       "solcConfig": {
         "settings": {
@@ -719,8 +719,8 @@
       }
     },
     "contracts/interfaces/IYieldDistributor.sol": {
-      "lastModificationDate": 1686174735063,
-      "contentHash": "0da819f9e918a8acee9b25f68465073e",
+      "lastModificationDate": 1686234822225,
+      "contentHash": "1ccd62c5aeb099035766de457657e176",
       "sourceName": "contracts/interfaces/IYieldDistributor.sol",
       "solcConfig": {
         "settings": {
@@ -1991,8 +1991,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1686232818308,
-      "contentHash": "a9b4e6122d7b9a1fedc46d31f0edb2e3",
+      "lastModificationDate": 1686239302718,
+      "contentHash": "01800785408731f9787b3042fc35ad97",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {

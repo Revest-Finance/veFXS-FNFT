@@ -287,11 +287,11 @@ contract veFXSRevest is Test {
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
-        hoax(smartWalletAddress, smartWalletAddress);
-        IYieldDistributor(DISTRIBUTOR).checkpoint();
+        hoax(fxsWhale);
+        IYieldDistributor(DISTRIBUTOR).checkpointOtherUser(smartWalletAddress);
 
         //Original balance of FXS before claiming yield
-        uint oriFXS = FXS.balanceOf(smartWalletAddress);
+        uint oriFXS = FXS.balanceOf(fxsWhale);
 
         //Skipping one years of timestamp
         uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
@@ -305,7 +305,7 @@ contract veFXSRevest is Test {
         revestVe.triggerOutputReceiverUpdate(fnftId, bytes(""));
         
         //Balance of FXS after claiming yield
-        uint curFXS = FXS.balanceOf(smartWalletAddress);
+        uint curFXS = FXS.balanceOf(fxsWhale);
 
         //Checker
         assertGt(curFXS, oriFXS);

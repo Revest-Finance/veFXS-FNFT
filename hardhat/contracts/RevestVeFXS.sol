@@ -246,7 +246,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     ) external override onlyTokenHolder(fnftId) {
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
-        wallet.claimRewards(VOTING_ESCROW, DISTRIBUTOR);
+        wallet.claimRewards(VOTING_ESCROW, DISTRIBUTOR, msg.sender);
     }       
 
     function proxyExecute(

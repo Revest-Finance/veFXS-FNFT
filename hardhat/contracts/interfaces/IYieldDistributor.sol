@@ -13,4 +13,6 @@ interface IYieldDistributor {
 
     function checkpoint() external;
 
+    function checkpointOtherUser(address user_addr) external;
+
 }
