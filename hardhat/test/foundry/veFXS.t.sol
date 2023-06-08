@@ -239,82 +239,85 @@ contract veFXSRevest is Test {
         console.log("Current balance of FXS: ", currentFXS);
     }
 
+    // /**
+    //  * Tgus test case focus on testing if the traditional wallet work on yield claiming 
+    //  */
+    // function testClaimYieldOnTraditionalWallet() public {
+    //      //Testing normal contract claim yield
+    //     console.log("Current timestamp: ", block.timestamp);
+    //     console.log("Original Yield: ", IYieldDistributor(DISTRIBUTOR).yields(smartWalletAddress));
+
+
+    //     hoax(fxsWhale);
+    //     console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
+    //     console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
+
+    //     hoax(fxsWhale, fxsWhale);
+    //     IVotingEscrow(VOTING_ESCROW).create_lock(1e18, block.timestamp + (2 * 365 * 60 * 60 * 24));
+    //     hoax(fxsWhale, fxsWhale);
+    //     IYieldDistributor(DISTRIBUTOR).checkpoint();
+
+
+    //     console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
+
+    //     //Skipping one years of timestamp
+    //     uint timeSkip1 = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
+    //     skip(timeSkip1);
+
+    //     hoax(fxsWhale, fxsWhale);
+    //     console.log("Earned: ", IYieldDistributor(DISTRIBUTOR).earned(fxsWhale));
+    //     hoax(fxsWhale, fxsWhale);
+    //     console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
+    //     hoax(fxsWhale, fxsWhale);
+    //     IYieldDistributor(DISTRIBUTOR).checkpoint();
+    // }
+
     /**
      * This test case focus on if user can receive yield from their fnft
      */
     function testClaimYield() public {
-        console.log("Current timestamp: ", block.timestamp);
-        console.log("Original Yield: ", IYieldDistributor(DISTRIBUTOR).yields(smartWalletAddress));
-
-
-        hoax(fxsWhale);
-        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
-
-        console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
-
-        hoax(fxsWhale, fxsWhale);
-        IVotingEscrow(VOTING_ESCROW).create_lock(1e18, block.timestamp + (2 * 365 * 60 * 60 * 24));
-
-
-        console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
-
-        hoax(fxsWhale, fxsWhale);
-        console.log("Earned: ", IYieldDistributor(DISTRIBUTOR).earned(fxsWhale));
-
-
-        //Skipping one years of timestamp
-        uint timeSkip1 = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
-        skip(timeSkip1);
-
-        hoax(fxsWhale, fxsWhale);
-        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
-
-        
-       
         // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
         uint amount = 1e18; //FXS  
 
-        //Minting the FNFT
+        //Minting the FNFT and Checkpoint for Yield Distributor
         hoax(fxsWhale);
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+        hoax(smartWalletAddress, smartWalletAddress);
+        IYieldDistributor(DISTRIBUTOR).checkpoint();
 
-        //Original balance of FXS after depositing the FNFT
-        uint oriFXS = FXS.balanceOf(fxsWhale);
+        //Original balance of FXS before claiming yield
+        uint oriFXS = FXS.balanceOf(smartWalletAddress);
 
         //Skipping one years of timestamp
-        uint timeSkip = (3 * 365 * 60 * 60 * 24 + 1); //s 2 years
+        uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
         skip(timeSkip);
-
-        console.log("Timestamp after timeskip: ", block.timestamp);
 
         //Destroy the address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
 
-        //Value check
-        console.log("Smart Wallet address: ", smartWalletAddress);
-        hoax(smartWalletAddress);
-        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
-
-
-        hoax(fxsWhale);
-        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
-
-
+        //Claim yield
         hoax(fxsWhale);
         revestVe.triggerOutputReceiverUpdate(fnftId, bytes(""));
-        uint curFXS = FXS.balanceOf(fxsWhale);
+        
+        //Balance of FXS after claiming yield
+        uint curFXS = FXS.balanceOf(smartWalletAddress);
 
+        //Checker
+        assertGt(curFXS, oriFXS);
+
+        //Console
         console.log("Original balance of FXS: ", oriFXS);
         console.log("Current balance of FXS: ", curFXS);
     }
 
     function testOutputDisplay() public {
 
+        //console.log("Earned: ", IYieldDistributor(DISTRIBUTOR).earned(smartWalletAddress));
     }
 
 
