@@ -191,10 +191,10 @@ contract veFXSRevest is Test {
         hoax(fxsWhale);
         revest.extendFNFTMaturity(fnftId, expiration);
 
-        IRevest.Lock memory currentLock = ILockManager(LOCK_MANAGER).getLock(fnftId);
-        uint newExpiry = currentLock.timeLockExpiry;
-
-        console.log("New Expiration: ", newExpiry);
+        // IRevest.Lock memory currentLock = ILockManager(LOCK_MANAGER).getLock(fnftId);
+        // uint newExpiry = currentLock.timeLockExpiry;
+        
+        // console.log("New Expiration: ", newExpiry);
     }
 
     /**
@@ -239,9 +239,9 @@ contract veFXSRevest is Test {
         console.log("Current balance of FXS: ", currentFXS);
     }
 
-    // /**
-    //  * Tgus test case focus on testing if the traditional wallet work on yield claiming 
-    //  */
+    // // /**
+    // //  * Tgus test case focus on testing if the traditional wallet work on yield claiming 
+    // //  */
     // function testClaimYieldOnTraditionalWallet() public {
     //      //Testing normal contract claim yield
     //     console.log("Current timestamp: ", block.timestamp);
@@ -287,8 +287,8 @@ contract veFXSRevest is Test {
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
-        hoax(fxsWhale);
-        IYieldDistributor(DISTRIBUTOR).checkpointOtherUser(smartWalletAddress);
+        // hoax(fxsWhale);
+        // IYieldDistributor(DISTRIBUTOR).checkpointOtherUser(smartWalletAddress);
 
         //Original balance of FXS before claiming yield
         uint oriFXS = FXS.balanceOf(fxsWhale);
@@ -316,14 +316,29 @@ contract veFXSRevest is Test {
         assertEq(curFXS, oriFXS + yieldToClaim);
 
         //Console
+        console.log("Yield to claim: ", yieldToClaim);
         console.log("Original balance of FXS: ", oriFXS);
         console.log("Current balance of FXS: ", curFXS);
     }
 
-    function testOutputDisplay() public {
+    // function testOutputDisplay() public {
+    //     // Outline the parameters that will govern the FNFT
+    //     uint time = block.timestamp;
+    //     uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+    //     uint amount = 1e18; //FXS  
 
-        //console.log("Earned: ", IYieldDistributor(DISTRIBUTOR).earned(smartWalletAddress));
-    }
+    //     //Minting the FNFT and Checkpoint for Yield Distributor
+    //     hoax(fxsWhale);
+    //     FXS.approve(address(revestVe), amount);
+    //     hoax(fxsWhale);
+    //     fnftId = revestVe.lockTokens(expiration, amount);
+    //     smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+
+    //     //Getting output display values
+    //     bytes displayData = getOutputDisplayValues(fnftId);
+
+
+    // }
 
 
 }

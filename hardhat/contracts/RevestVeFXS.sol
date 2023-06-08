@@ -26,9 +26,6 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 // Libraries
 import "./lib/RevestHelper.sol";
 
-interface veFrax {
-    function create_lock(uint256 _value, uint256 _unlock_time) external;
-}
 
 /**
  * @title Revest FNFT for veFXS 
@@ -177,7 +174,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
             SmartWalletWhitelistV2(IVotingEscrow(VOTING_ESCROW).smart_wallet_checker()).approveWallet(smartWallAdd);
 
             // We deposit our funds into the wallet
-            wallet.createLock(amountToLock, endTime, VOTING_ESCROW);
+            wallet.createLock(amountToLock, endTime, VOTING_ESCROW, DISTRIBUTOR);
             emit DepositERC20OutputReceiver(msg.sender, TOKEN, amountToLock, fnftId, abi.encode(smartWallAdd));
         }
     }
@@ -338,10 +335,8 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     }
 
     function getOutputDisplayValues(uint fnftId) external view override returns (bytes memory displayData) {
-        //TODO: IMPLEMENT
-
         //calculate yield output for certain FNFT 
-        uint yield = IYieldDistributor(DISTRIBUTOR).yields(address(this));
+        uint yield = IYieldDistributor(DISTRIBUTOR).earned(Clones.predictDeterministicAddress(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId))));
 
         bool hasRewards =  (yield > 0) ? true : false;
 

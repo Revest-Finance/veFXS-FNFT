@@ -28,7 +28,7 @@ contract VestedEscrowSmartWallet {
     //Hardcoded for MVP
     address public constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
     address public constant veFXS = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
-    address public DISTRIBUTOR = 0xc6764e58b36e26b08Fd1d2AeD4538c02171fA872;
+   
 
 
     constructor(address _rewardToken) {
@@ -41,7 +41,7 @@ contract VestedEscrowSmartWallet {
         _;
     }
 
-    function createLock(uint value, uint unlockTime, address votingEscrow) external onlyMaster {
+    function createLock(uint value, uint unlockTime, address votingEscrow, address distributor) external onlyMaster {
         // Only callable from the parent contract, transfer tokens from user -> parent, parent -> VE
         address token = IVotingEscrow(votingEscrow).token();
         // Single-use approval system
@@ -50,14 +50,10 @@ contract VestedEscrowSmartWallet {
         }
         // Create the lock
         IVotingEscrow(votingEscrow).create_lock(value, unlockTime);
-        //IYieldDistributor(DISTRIBUTOR).checkpoint();
-        //_checkPoint();
+        IYieldDistributor(distributor).checkpoint();
         _cleanMemory();
     }
 
-    function _checkPoint() internal onlyMaster {
-        IYieldDistributor(DISTRIBUTOR).checkpoint();
-    }
 
     function increaseAmount(uint value, address votingEscrow) external onlyMaster {
         IVotingEscrow(votingEscrow).increase_amount(value);
