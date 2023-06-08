@@ -300,6 +300,10 @@ contract veFXSRevest is Test {
         //Destroy the address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
 
+        //Yield Claim check
+        hoax(fxsWhale);
+        uint yieldToClaim = IYieldDistributor(DISTRIBUTOR).earned(smartWalletAddress);
+
         //Claim yield
         hoax(fxsWhale);
         revestVe.triggerOutputReceiverUpdate(fnftId, bytes(""));
@@ -308,7 +312,8 @@ contract veFXSRevest is Test {
         uint curFXS = FXS.balanceOf(fxsWhale);
 
         //Checker
-        assertGt(curFXS, oriFXS);
+        assertGt(yieldToClaim, 0);
+        assertEq(curFXS, oriFXS + yieldToClaim);
 
         //Console
         console.log("Original balance of FXS: ", oriFXS);
