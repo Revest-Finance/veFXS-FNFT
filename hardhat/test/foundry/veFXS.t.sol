@@ -9,6 +9,7 @@ import "contracts/interfaces/IVotingEscrow.sol";
 import "contracts/interfaces/IYieldDistributor.sol";
 import "contracts/interfaces/ILockManager.sol";
 import "contracts/interfaces/IRevest.sol";
+import "contracts/lib/RevestHelper.sol";
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -29,6 +30,7 @@ contract veFXSRevest is Test {
     address public revestOwner = 0x801e08919a483ceA4C345b5f8789E506e2624ccf;
     address public DISTRIBUTOR = 0xc6764e58b36e26b08Fd1d2AeD4538c02171fA872;
     address public LOCK_MANAGER = 0x226124E83868812D3Dae87eB3C5F28047E1070B7; 
+    address public constant REWARD_TOKEN = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
 
     Revest revest = Revest(0x9f551F75DB1c301236496A2b4F7CeCb2d1B2b242);
     ERC20 FXS = ERC20(0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0);
@@ -242,35 +244,35 @@ contract veFXSRevest is Test {
     // // /**
     // //  * Tgus test case focus on testing if the traditional wallet work on yield claiming 
     // //  */
-    // function testClaimYieldOnTraditionalWallet() public {
-    //      //Testing normal contract claim yield
-    //     console.log("Current timestamp: ", block.timestamp);
-    //     console.log("Original Yield: ", IYieldDistributor(DISTRIBUTOR).yields(smartWalletAddress));
+    function testClaimYieldOnTraditionalWallet() public {
+         //Testing normal contract claim yield
+        console.log("Current timestamp: ", block.timestamp);
+        console.log("Original Yield: ", IYieldDistributor(DISTRIBUTOR).yields(smartWalletAddress));
 
 
-    //     hoax(fxsWhale);
-    //     console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
-    //     console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
+        hoax(fxsWhale);
+        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
+        console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
 
-    //     hoax(fxsWhale, fxsWhale);
-    //     IVotingEscrow(VOTING_ESCROW).create_lock(1e18, block.timestamp + (2 * 365 * 60 * 60 * 24));
-    //     hoax(fxsWhale, fxsWhale);
-    //     IYieldDistributor(DISTRIBUTOR).checkpoint();
+        hoax(fxsWhale, fxsWhale);
+        IVotingEscrow(VOTING_ESCROW).create_lock(1e18, block.timestamp + (2 * 365 * 60 * 60 * 24));
+        hoax(fxsWhale, fxsWhale);
+        IYieldDistributor(DISTRIBUTOR).checkpoint();
 
 
-    //     console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
+        console.log("veFXS balance: ", veFXS.balanceOf(fxsWhale));
 
-    //     //Skipping one years of timestamp
-    //     uint timeSkip1 = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
-    //     skip(timeSkip1);
+        //Skipping one years of timestamp
+        uint timeSkip1 = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
+        skip(timeSkip1);
 
-    //     hoax(fxsWhale, fxsWhale);
-    //     console.log("Earned: ", IYieldDistributor(DISTRIBUTOR).earned(fxsWhale));
-    //     hoax(fxsWhale, fxsWhale);
-    //     console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
-    //     hoax(fxsWhale, fxsWhale);
-    //     IYieldDistributor(DISTRIBUTOR).checkpoint();
-    // }
+        hoax(fxsWhale, fxsWhale);
+        console.log("Earned: ", IYieldDistributor(DISTRIBUTOR).earned(fxsWhale));
+        hoax(fxsWhale, fxsWhale);
+        console.log("Yield: ", IYieldDistributor(DISTRIBUTOR).getYield());
+        hoax(fxsWhale, fxsWhale);
+        IYieldDistributor(DISTRIBUTOR).checkpoint();
+    }
 
     /**
      * This test case focus on if user can receive yield from their fnft
@@ -321,24 +323,50 @@ contract veFXSRevest is Test {
         console.log("Current balance of FXS: ", curFXS);
     }
 
-    // function testOutputDisplay() public {
-    //     // Outline the parameters that will govern the FNFT
-    //     uint time = block.timestamp;
-    //     uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-    //     uint amount = 1e18; //FXS  
+    function testOutputDisplay() public {
+        // Outline the parameters that will govern the FNFT
+        uint time = block.timestamp;
+        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+        uint amount = 1e18; //FXS  
 
-    //     //Minting the FNFT and Checkpoint for Yield Distributor
-    //     hoax(fxsWhale);
-    //     FXS.approve(address(revestVe), amount);
-    //     hoax(fxsWhale);
-    //     fnftId = revestVe.lockTokens(expiration, amount);
-    //     smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+        //Minting the FNFT and Checkpoint for Yield Distributor
+        hoax(fxsWhale);
+        FXS.approve(address(revestVe), amount);
+        hoax(fxsWhale);
+        fnftId = revestVe.lockTokens(expiration, amount); 
+        smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
-    //     //Getting output display values
-    //     bytes displayData = getOutputDisplayValues(fnftId);
+        //Skipping one years of timestamp
+        uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
+        skip(timeSkip);
 
+         //Yield Claim check
+        hoax(fxsWhale);
+        uint yieldToClaim = IYieldDistributor(DISTRIBUTOR).earned(smartWalletAddress);
 
-    // }
+        //Getting output display values
+        bytes memory displayData = revestVe.getOutputDisplayValues(fnftId);
+        (address adr, string memory rewardDesc, bool hasRewards, uint maxExtensions, address token, int128 lockedBalance) = abi.decode(displayData, (address, string, bool, uint, address, int128));
+
+        string memory par1 = string(abi.encodePacked(RevestHelper.getName(REWARD_TOKEN),": "));
+        string memory par2 = string(abi.encodePacked(RevestHelper.amountToDecimal(yieldToClaim, REWARD_TOKEN), " [", RevestHelper.getTicker(REWARD_TOKEN), "] Tokens Available"));
+        string memory expectedRewardsDesc = string(abi.encodePacked(par1, par2));
+
+        //checker
+        assertEq(adr, smartWalletAddress);
+        assertEq(rewardDesc, expectedRewardsDesc);
+        assertEq(hasRewards, yieldToClaim > 0);
+        assertEq(token, address(FXS));
+        assertEq(lockedBalance, 9e17);
+
+        //Logging
+        console.log(adr);
+        console.logString(rewardDesc);
+        console.log(hasRewards);
+        console.log(maxExtensions);
+        console.log(token);
+        console.logInt(lockedBalance);
+    }
 
 
 }
