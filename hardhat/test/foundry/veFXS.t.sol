@@ -397,13 +397,16 @@ contract veFXSRevest is Test {
         assertEq(revestAdmin, admin);
 
         //Setter Method
-        revestVe.setRevestAdmin(address(0));
+        hoax(address(0xdead));
         vm.expectRevert("Ownable: caller is not the owner");
+        revestVe.setRevestAdmin(address(0));
 
-        hoax(revestOwner);
-        revestVe.setRevestAdmin(address(1));
+        console.log("---------------------");
+
+        hoax(revestVe.owner());
+        revestVe.setRevestAdmin(address(0xdead));
         address newAddressRegistry = revestVe.ADMIN();
-        assertEq(newAddressRegistry, address(1));
+        assertEq(newAddressRegistry, address(0xdead), "new revest admin not set");
     }
 
     function testWeiFee() public {

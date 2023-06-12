@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1686242386514,
-      "contentHash": "4cc2b2660bc81221cabf34b1e88a20f6",
+      "lastModificationDate": 1686583720302,
+      "contentHash": "26fc85e9a199458d72fc83e9229822c0",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -61,6 +61,7 @@
         "contracts/interfaces/IVotingEscrow.sol",
         "contracts/interfaces/IYieldDistributor.sol",
         "contracts/lib/RevestHelper.sol",
+        "lib/forge-std/src/console.sol",
         "node_modules/@openzeppelin/contracts/access/Ownable.sol",
         "node_modules/@openzeppelin/contracts/proxy/Clones.sol",
         "node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol",
@@ -75,12 +76,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "RevestVeFXS": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "RevestVeFXS.sol/RevestVeFXS.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "RevestVeFXS.sol/RevestVeFXS.json"
         }
       }
     },
     "contracts/SmartWalletWhitelistV2.sol": {
-      "lastModificationDate": 1685381703218,
+      "lastModificationDate": 1686173055850,
       "contentHash": "589700ee550c11ac516ec4a7684f6d7c",
       "sourceName": "contracts/SmartWalletWhitelistV2.sol",
       "solcConfig": {
@@ -115,15 +116,15 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "SmartWalletChecker": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "SmartWalletWhitelistV2.sol/SmartWalletChecker.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "SmartWalletWhitelistV2.sol/SmartWalletChecker.json"
         },
         "SmartWalletWhitelistV2": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "SmartWalletWhitelistV2.sol/SmartWalletWhitelistV2.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "SmartWalletWhitelistV2.sol/SmartWalletWhitelistV2.json"
         }
       }
     },
     "contracts/VestedEscrowSmartWallet.sol": {
-      "lastModificationDate": 1686242413459,
+      "lastModificationDate": 1686242943370,
       "contentHash": "13a91b2b974c1ead5f4188ca9aa51ceb",
       "sourceName": "contracts/VestedEscrowSmartWallet.sol",
       "solcConfig": {
@@ -167,12 +168,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "VestedEscrowSmartWallet": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "VestedEscrowSmartWallet.sol/VestedEscrowSmartWallet.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "VestedEscrowSmartWallet.sol/VestedEscrowSmartWallet.json"
         }
       }
     },
     "contracts/interfaces/IAddressRegistry.sol": {
-      "lastModificationDate": 1685381703218,
+      "lastModificationDate": 1686173055850,
       "contentHash": "544b1a32b24675bd28121fcd591dca24",
       "sourceName": "contracts/interfaces/IAddressRegistry.sol",
       "solcConfig": {
@@ -207,12 +208,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IAddressRegistry": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IAddressRegistry.sol/IAddressRegistry.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IAddressRegistry.sol/IAddressRegistry.json"
         }
       }
     },
     "contracts/interfaces/IDistributor.sol": {
-      "lastModificationDate": 1685381703218,
+      "lastModificationDate": 1686173055850,
       "contentHash": "afda67eae6b4f0016fd9db55c6e60bc0",
       "sourceName": "contracts/interfaces/IDistributor.sol",
       "solcConfig": {
@@ -250,12 +251,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IDistributor": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IDistributor.sol/IDistributor.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IDistributor.sol/IDistributor.json"
         }
       }
     },
     "contracts/interfaces/IFNFTHandler.sol": {
-      "lastModificationDate": 1685381703218,
+      "lastModificationDate": 1686173055850,
       "contentHash": "7e26c0f6eaa94a846b79391da5a1345c",
       "sourceName": "contracts/interfaces/IFNFTHandler.sol",
       "solcConfig": {
@@ -290,12 +291,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IFNFTHandler": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IFNFTHandler.sol/IFNFTHandler.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IFNFTHandler.sol/IFNFTHandler.json"
         }
       }
     },
     "contracts/interfaces/IFeeReporter.sol": {
-      "lastModificationDate": 1685381703218,
+      "lastModificationDate": 1686173055850,
       "contentHash": "6416f46547fd25e1e593b60562f59800",
       "sourceName": "contracts/interfaces/IFeeReporter.sol",
       "solcConfig": {
@@ -330,12 +331,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IFeeReporter": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IFeeReporter.sol/IFeeReporter.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IFeeReporter.sol/IFeeReporter.json"
         }
       }
     },
     "contracts/interfaces/ILockManager.sol": {
-      "lastModificationDate": 1685381703218,
+      "lastModificationDate": 1686173055850,
       "contentHash": "851ae81c1b1e22fde4cc87b40c2890cc",
       "sourceName": "contracts/interfaces/ILockManager.sol",
       "solcConfig": {
@@ -372,12 +373,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "ILockManager": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "ILockManager.sol/ILockManager.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "ILockManager.sol/ILockManager.json"
         }
       }
     },
     "contracts/interfaces/IOutputReceiver.sol": {
-      "lastModificationDate": 1685381703219,
+      "lastModificationDate": 1686173055850,
       "contentHash": "4d300b2e62ea34e72ab6c0aa9f309ae0",
       "sourceName": "contracts/interfaces/IOutputReceiver.sol",
       "solcConfig": {
@@ -415,12 +416,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IOutputReceiver": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IOutputReceiver.sol/IOutputReceiver.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IOutputReceiver.sol/IOutputReceiver.json"
         }
       }
     },
     "contracts/interfaces/IOutputReceiverV2.sol": {
-      "lastModificationDate": 1685381703219,
+      "lastModificationDate": 1686173055850,
       "contentHash": "1e33d973dd3fc407bd069b2ab7aaabc7",
       "sourceName": "contracts/interfaces/IOutputReceiverV2.sol",
       "solcConfig": {
@@ -460,12 +461,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IOutputReceiverV2": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IOutputReceiverV2.sol/IOutputReceiverV2.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IOutputReceiverV2.sol/IOutputReceiverV2.json"
         }
       }
     },
     "contracts/interfaces/IOutputReceiverV3.sol": {
-      "lastModificationDate": 1685381703219,
+      "lastModificationDate": 1686173055850,
       "contentHash": "29bd823ca736dd3df705abb6e3ab2398",
       "sourceName": "contracts/interfaces/IOutputReceiverV3.sol",
       "solcConfig": {
@@ -506,12 +507,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IOutputReceiverV3": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IOutputReceiverV3.sol/IOutputReceiverV3.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IOutputReceiverV3.sol/IOutputReceiverV3.json"
         }
       }
     },
     "contracts/interfaces/IRegistryProvider.sol": {
-      "lastModificationDate": 1685381703219,
+      "lastModificationDate": 1686173055850,
       "contentHash": "6982a1961d2b5d2fa2ac4c5e1a3ce9d0",
       "sourceName": "contracts/interfaces/IRegistryProvider.sol",
       "solcConfig": {
@@ -546,12 +547,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IRegistryProvider": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IRegistryProvider.sol/IRegistryProvider.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IRegistryProvider.sol/IRegistryProvider.json"
         }
       }
     },
     "contracts/interfaces/IRevest.sol": {
-      "lastModificationDate": 1685381703219,
+      "lastModificationDate": 1686173055850,
       "contentHash": "1845969737e8c6cf8e771aca6d5fe39d",
       "sourceName": "contracts/interfaces/IRevest.sol",
       "solcConfig": {
@@ -586,12 +587,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IRevest": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IRevest.sol/IRevest.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IRevest.sol/IRevest.json"
         }
       }
     },
     "contracts/interfaces/IRewardsHandler.sol": {
-      "lastModificationDate": 1685381703219,
+      "lastModificationDate": 1686173055850,
       "contentHash": "feea9da0edc261a5941c507a5b15ca6a",
       "sourceName": "contracts/interfaces/IRewardsHandler.sol",
       "solcConfig": {
@@ -626,12 +627,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IRewardsHandler": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IRewardsHandler.sol/IRewardsHandler.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IRewardsHandler.sol/IRewardsHandler.json"
         }
       }
     },
     "contracts/interfaces/ITokenVault.sol": {
-      "lastModificationDate": 1685381703220,
+      "lastModificationDate": 1686173055850,
       "contentHash": "e8764a20d6d87f8f7797ec4cb2145de5",
       "sourceName": "contracts/interfaces/ITokenVault.sol",
       "solcConfig": {
@@ -668,12 +669,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "ITokenVault": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "ITokenVault.sol/ITokenVault.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "ITokenVault.sol/ITokenVault.json"
         }
       }
     },
     "contracts/interfaces/IVotingEscrow.sol": {
-      "lastModificationDate": 1686152282932,
+      "lastModificationDate": 1686173114366,
       "contentHash": "97d71ed354b2fcfcc597f3cd41ab1b7b",
       "sourceName": "contracts/interfaces/IVotingEscrow.sol",
       "solcConfig": {
@@ -711,12 +712,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IVotingEscrow": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IVotingEscrow.sol/IVotingEscrow.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IVotingEscrow.sol/IVotingEscrow.json"
         }
       }
     },
     "contracts/interfaces/IYieldDistributor.sol": {
-      "lastModificationDate": 1686234822225,
+      "lastModificationDate": 1686242943370,
       "contentHash": "1ccd62c5aeb099035766de457657e176",
       "sourceName": "contracts/interfaces/IYieldDistributor.sol",
       "solcConfig": {
@@ -751,12 +752,12 @@
       "versionRequirement": ">=0.8.0",
       "artifacts": {
         "IYieldDistributor": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IYieldDistributor.sol/IYieldDistributor.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IYieldDistributor.sol/IYieldDistributor.json"
         }
       }
     },
     "contracts/lib/RevestHelper.sol": {
-      "lastModificationDate": 1685381703220,
+      "lastModificationDate": 1686173055850,
       "contentHash": "3554904658100ebfeac9339dd32702b6",
       "sourceName": "contracts/lib/RevestHelper.sol",
       "solcConfig": {
@@ -797,12 +798,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "RevestHelper": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "RevestHelper.sol/RevestHelper.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "RevestHelper.sol/RevestHelper.json"
         }
       }
     },
     "lib/forge-std/lib/ds-test/src/test.sol": {
-      "lastModificationDate": 1685728591188,
+      "lastModificationDate": 1686173076626,
       "contentHash": "9febff9d09f18af5306669dc276c4c43",
       "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
       "solcConfig": {
@@ -837,12 +838,12 @@
       "versionRequirement": ">=0.5.0",
       "artifacts": {
         "DSTest": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "test.sol/DSTest.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "test.sol/DSTest.json"
         }
       }
     },
     "lib/forge-std/src/Base.sol": {
-      "lastModificationDate": 1685728590589,
+      "lastModificationDate": 1686173076090,
       "contentHash": "ee13c050b1914464f1d3f90cde90204b",
       "sourceName": "lib/forge-std/src/Base.sol",
       "solcConfig": {
@@ -880,18 +881,18 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "CommonBase": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Base.sol/CommonBase.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Base.sol/CommonBase.json"
         },
         "ScriptBase": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Base.sol/ScriptBase.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Base.sol/ScriptBase.json"
         },
         "TestBase": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Base.sol/TestBase.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Base.sol/TestBase.json"
         }
       }
     },
     "lib/forge-std/src/StdAssertions.sol": {
-      "lastModificationDate": 1685728590590,
+      "lastModificationDate": 1686173076090,
       "contentHash": "6cc2858240bcd443debbbf075490e325",
       "sourceName": "lib/forge-std/src/StdAssertions.sol",
       "solcConfig": {
@@ -929,12 +930,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "StdAssertions": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdAssertions.sol/StdAssertions.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdAssertions.sol/StdAssertions.json"
         }
       }
     },
     "lib/forge-std/src/StdChains.sol": {
-      "lastModificationDate": 1685728590590,
+      "lastModificationDate": 1686173076090,
       "contentHash": "9c76820952c8f5e2fc02f872dc3afeb4",
       "sourceName": "lib/forge-std/src/StdChains.sol",
       "solcConfig": {
@@ -971,12 +972,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "StdChains": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdChains.sol/StdChains.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdChains.sol/StdChains.json"
         }
       }
     },
     "lib/forge-std/src/StdCheats.sol": {
-      "lastModificationDate": 1685728590590,
+      "lastModificationDate": 1686173076090,
       "contentHash": "24785368b480beef5cd536afd144d5cb",
       "sourceName": "lib/forge-std/src/StdCheats.sol",
       "solcConfig": {
@@ -1015,15 +1016,15 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "StdCheats": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdCheats.sol/StdCheats.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdCheats.sol/StdCheats.json"
         },
         "StdCheatsSafe": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdCheats.sol/StdCheatsSafe.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdCheats.sol/StdCheatsSafe.json"
         }
       }
     },
     "lib/forge-std/src/StdError.sol": {
-      "lastModificationDate": 1685567491467,
+      "lastModificationDate": 1686173076090,
       "contentHash": "64c896e1276a291776e5ea5aecb3870a",
       "sourceName": "lib/forge-std/src/StdError.sol",
       "solcConfig": {
@@ -1058,12 +1059,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "stdError": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdError.sol/stdError.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdError.sol/stdError.json"
         }
       }
     },
     "lib/forge-std/src/StdInvariant.sol": {
-      "lastModificationDate": 1685728590590,
+      "lastModificationDate": 1686173076090,
       "contentHash": "12c06010ec43ce935ed209d5aca30828",
       "sourceName": "lib/forge-std/src/StdInvariant.sol",
       "solcConfig": {
@@ -1098,12 +1099,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "StdInvariant": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdInvariant.sol/StdInvariant.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdInvariant.sol/StdInvariant.json"
         }
       }
     },
     "lib/forge-std/src/StdJson.sol": {
-      "lastModificationDate": 1685728590590,
+      "lastModificationDate": 1686173076090,
       "contentHash": "2e1d13674e152408867795362d833c24",
       "sourceName": "lib/forge-std/src/StdJson.sol",
       "solcConfig": {
@@ -1140,12 +1141,12 @@
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "stdJson": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdJson.sol/stdJson.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdJson.sol/stdJson.json"
         }
       }
     },
     "lib/forge-std/src/StdMath.sol": {
-      "lastModificationDate": 1685567491468,
+      "lastModificationDate": 1686173076090,
       "contentHash": "9da8f453eba6bb98f3d75bc6822bfb29",
       "sourceName": "lib/forge-std/src/StdMath.sol",
       "solcConfig": {
@@ -1180,12 +1181,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "stdMath": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdMath.sol/stdMath.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdMath.sol/stdMath.json"
         }
       }
     },
     "lib/forge-std/src/StdStorage.sol": {
-      "lastModificationDate": 1685728590590,
+      "lastModificationDate": 1686173076090,
       "contentHash": "3cb9868082df39a53927db09dbc21f23",
       "sourceName": "lib/forge-std/src/StdStorage.sol",
       "solcConfig": {
@@ -1222,15 +1223,15 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "stdStorage": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdStorage.sol/stdStorage.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdStorage.sol/stdStorage.json"
         },
         "stdStorageSafe": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdStorage.sol/stdStorageSafe.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdStorage.sol/stdStorageSafe.json"
         }
       }
     },
     "lib/forge-std/src/StdStyle.sol": {
-      "lastModificationDate": 1685728590591,
+      "lastModificationDate": 1686173076090,
       "contentHash": "820e6f6b7704f0c980fae604b1e34b18",
       "sourceName": "lib/forge-std/src/StdStyle.sol",
       "solcConfig": {
@@ -1267,12 +1268,12 @@
       "versionRequirement": ">=0.4.22, <0.9.0",
       "artifacts": {
         "StdStyle": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdStyle.sol/StdStyle.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdStyle.sol/StdStyle.json"
         }
       }
     },
     "lib/forge-std/src/StdUtils.sol": {
-      "lastModificationDate": 1685728590591,
+      "lastModificationDate": 1686173076090,
       "contentHash": "dd923493ddd9f98777687205cfe9d646",
       "sourceName": "lib/forge-std/src/StdUtils.sol",
       "solcConfig": {
@@ -1310,12 +1311,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "StdUtils": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "StdUtils.sol/StdUtils.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "StdUtils.sol/StdUtils.json"
         }
       }
     },
     "lib/forge-std/src/Test.sol": {
-      "lastModificationDate": 1685728590591,
+      "lastModificationDate": 1686173076090,
       "contentHash": "bc9d74a0c612e1c2b66cca2973bcc803",
       "sourceName": "lib/forge-std/src/Test.sol",
       "solcConfig": {
@@ -1367,12 +1368,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "Test": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Test.sol/Test.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Test.sol/Test.json"
         }
       }
     },
     "lib/forge-std/src/Vm.sol": {
-      "lastModificationDate": 1685728590591,
+      "lastModificationDate": 1686173076090,
       "contentHash": "93cbedbadc52c20145ebbfa27ce148c4",
       "sourceName": "lib/forge-std/src/Vm.sol",
       "solcConfig": {
@@ -1407,15 +1408,15 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "Vm": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Vm.sol/Vm.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Vm.sol/Vm.json"
         },
         "VmSafe": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Vm.sol/VmSafe.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Vm.sol/VmSafe.json"
         }
       }
     },
     "lib/forge-std/src/console.sol": {
-      "lastModificationDate": 1685567491472,
+      "lastModificationDate": 1686173076090,
       "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
       "sourceName": "lib/forge-std/src/console.sol",
       "solcConfig": {
@@ -1450,12 +1451,12 @@
       "versionRequirement": ">=0.4.22, <0.9.0",
       "artifacts": {
         "console": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "console.sol/console.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "console.sol/console.json"
         }
       }
     },
     "lib/forge-std/src/console2.sol": {
-      "lastModificationDate": 1685728590592,
+      "lastModificationDate": 1686173076090,
       "contentHash": "491ca717c1915995e78cc361485a3067",
       "sourceName": "lib/forge-std/src/console2.sol",
       "solcConfig": {
@@ -1490,12 +1491,12 @@
       "versionRequirement": ">=0.4.22, <0.9.0",
       "artifacts": {
         "console2": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "console2.sol/console2.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "console2.sol/console2.json"
         }
       }
     },
     "lib/forge-std/src/interfaces/IMulticall3.sol": {
-      "lastModificationDate": 1685728590592,
+      "lastModificationDate": 1686173076090,
       "contentHash": "7b131ca1ca32ef6378b7b9ad5488b901",
       "sourceName": "lib/forge-std/src/interfaces/IMulticall3.sol",
       "solcConfig": {
@@ -1530,12 +1531,12 @@
       "versionRequirement": ">=0.6.2, <0.9.0",
       "artifacts": {
         "IMulticall3": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IMulticall3.sol/IMulticall3.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IMulticall3.sol/IMulticall3.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1685633150703,
+      "lastModificationDate": 1686173091854,
       "contentHash": "4fe56b59ced59d87df6b796758f62895",
       "sourceName": "node_modules/@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -1572,12 +1573,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Ownable": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Ownable.sol/Ownable.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Ownable.sol/Ownable.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/proxy/Clones.sol": {
-      "lastModificationDate": 1685633149477,
+      "lastModificationDate": 1686173091662,
       "contentHash": "e8f1f04c46c67381a0b13f90439f9b41",
       "sourceName": "node_modules/@openzeppelin/contracts/proxy/Clones.sol",
       "solcConfig": {
@@ -1612,12 +1613,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Clones": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Clones.sol/Clones.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Clones.sol/Clones.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-      "lastModificationDate": 1685633150798,
+      "lastModificationDate": 1686173091866,
       "contentHash": "53fbff678f378956efcb207fa748eaa6",
       "sourceName": "node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol",
       "solcConfig": {
@@ -1652,12 +1653,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "ReentrancyGuard": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "ReentrancyGuard.sol/ReentrancyGuard.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "ReentrancyGuard.sol/ReentrancyGuard.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1685633150083,
+      "lastModificationDate": 1686173091766,
       "contentHash": "acad756301f0fb200ecc66138e8cd5c5",
       "sourceName": "node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -1696,12 +1697,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "ERC20": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "ERC20.sol/ERC20.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "ERC20.sol/ERC20.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1685633150523,
+      "lastModificationDate": 1686173091830,
       "contentHash": "0eac3e1a83ee62326ca007811285b274",
       "sourceName": "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -1736,12 +1737,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IERC20": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IERC20.sol/IERC20.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IERC20.sol/IERC20.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1685633150531,
+      "lastModificationDate": 1686173091834,
       "contentHash": "aa1be06992a99bb7393b26a6af3c4dfb",
       "sourceName": "node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -1778,12 +1779,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IERC20Metadata": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IERC20Metadata.sol/IERC20Metadata.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IERC20Metadata.sol/IERC20Metadata.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "lastModificationDate": 1685633150867,
+      "lastModificationDate": 1686173091878,
       "contentHash": "d37406082a74a9b6b114de522fcb6349",
       "sourceName": "node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -1821,12 +1822,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "SafeERC20": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "SafeERC20.sol/SafeERC20.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "SafeERC20.sol/SafeERC20.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1685633149358,
+      "lastModificationDate": 1686173091650,
       "contentHash": "1ea1589528625ace210951bc8cd186c9",
       "sourceName": "node_modules/@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -1861,12 +1862,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Address": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Address.sol/Address.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Address.sol/Address.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1685633149509,
+      "lastModificationDate": 1686173091674,
       "contentHash": "07f148e0d44b2ffc23b3ae6dd6e38cfb",
       "sourceName": "node_modules/@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -1901,12 +1902,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Context": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Context.sol/Context.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "Context.sol/Context.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1685633149962,
+      "lastModificationDate": 1686173091746,
       "contentHash": "a9a5319dff9088c6ffe757ea1c2a6729",
       "sourceName": "node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -1943,12 +1944,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "ERC165": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "ERC165.sol/ERC165.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "ERC165.sol/ERC165.json"
         }
       }
     },
     "node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1685633150487,
+      "lastModificationDate": 1686173091830,
       "contentHash": "9a04322bb8f6b8f2767d8358d1d2537b",
       "sourceName": "node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -1983,13 +1984,13 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IERC165": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "IERC165.sol/IERC165.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "IERC165.sol/IERC165.json"
         }
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1686579876475,
-      "contentHash": "14f3337d51ee8e17664ab7b66fb92205",
+      "lastModificationDate": 1686584011149,
+      "contentHash": "5d2be8864ab47b449265b26bce26470a",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {
@@ -2069,10 +2070,10 @@
       "versionRequirement": "^0.8.13",
       "artifacts": {
         "Revest": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "veFXS.t.sol/Revest.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "veFXS.t.sol/Revest.json"
         },
         "veFXSRevest": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "veFXS.t.sol/veFXSRevest.json"
+          "0.8.19+commit.7dd6d404.Linux.gcc": "veFXS.t.sol/veFXSRevest.json"
         }
       }
     }

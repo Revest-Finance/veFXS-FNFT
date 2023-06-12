@@ -26,6 +26,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 // Libraries
 import "./lib/RevestHelper.sol";
 
+import "forge-std/console.sol";
 
 /**
  * @title Revest FNFT for veFXS 
@@ -282,6 +283,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     }
     
     function setRevestAdmin(address _admin) external onlyOwner {
+        console.log("Setting revest admin to: ", _admin);
         ADMIN = _admin;
     }
 
