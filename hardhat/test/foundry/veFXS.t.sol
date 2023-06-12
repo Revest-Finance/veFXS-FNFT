@@ -323,6 +323,9 @@ contract veFXSRevest is Test {
         console.log("Current balance of FXS: ", curFXS);
     }
 
+     /**
+     * This test case focus on if the getOutputDisplayValue() output correctly
+     */
     function testOutputDisplay() public {
         // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
