@@ -259,7 +259,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     }
 
     // Utility functions
-
     function _isApproved(address wallet, address feeDistro) internal view returns (bool) {
         uint256 _id = uint256(uint160(feeDistro));
         uint256 _mask = 1 << _id % 256;
@@ -282,7 +281,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         addressRegistry = addressRegistry_;
     }
     
-    function setFrxAdmin(address _admin) external onlyOwner {
+    function setRevestAdmin(address _admin) external onlyOwner {
         ADMIN = _admin;
     }
 
@@ -319,7 +318,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     }
 
     /// View Functions
-
     function getCustomMetadata(uint) external view override returns (string memory) {
         return METADATA;
     }

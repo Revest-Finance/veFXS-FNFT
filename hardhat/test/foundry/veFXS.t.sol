@@ -371,5 +371,53 @@ contract veFXSRevest is Test {
         console.logInt(lockedBalance);
     }
 
+    // _____________________________________ Below are additional basic test for the contract ___________________________
 
+    /**
+     * 
+     */
+    function testAddressRegistry() public {
+        //Getter Method
+        address addressRegistry = revestVe.getAddressRegistry();
+        assertEq(addressRegistry, Provider);
+
+        //Setter Method
+        revestVe.setAddressRegistry(address(0));
+        vm.expectRevert("Ownable: caller is not the owner");
+
+        hoax(revestOwner);
+        revestVe.setAddressRegistry(address(0));
+        address newAddressRegistry = revestVe.getAddressRegistry();
+        assertEq(newAddressRegistry, address(0));
+    }
+
+    function testRevestAdmin() public {
+        //Getter Method
+        address revestAdmin = revestVe.ADMIN();
+        assertEq(revestAdmin, admin);
+
+        //Setter Method
+        revestVe.setRevestAdmin(address(0));
+        vm.expectRevert("Ownable: caller is not the owner");
+
+        hoax(revestOwner);
+        revestVe.setRevestAdmin(address(1));
+        address newAddressRegistry = revestVe.ADMIN();
+        assertEq(newAddressRegistry, address(1));
+    }
+
+    function testWeiFee() public {
+        //Getter Method 
+        uint weiFee = revestVe.getFlatWeiFee(fxsWhale);
+        assertEq(weiFee, 1 ether);
+
+        //Setter MEthod
+        revestVe.setWeiFee(2 ether);
+        vm.expectRevert("Ownable: caller is not the owner");
+
+        hoax(revestOwner);
+        revestVe.setWeiFee(2 ether);
+        uint newWeiFee = revestVe.getFlatWeiFee(fxsWhale);
+        assertEq(newWeiFee, 2 ether);
+    }
 }
