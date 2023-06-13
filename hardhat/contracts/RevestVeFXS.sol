@@ -25,8 +25,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 // Libraries
 import "./lib/RevestHelper.sol";
-
-import "forge-std/console.sol";
+import "../lib/forge-std/src/console.sol";
 
 /**
  * @title Revest FNFT for veFXS 
@@ -368,6 +367,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         return weiFee;
     }
 
+    ///This plays the same role as getFeePercentage(address)
     function getERC20Fee(address) external view override returns (uint) {
         return fee;
     }
