@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1686673404448,
-      "contentHash": "49096e824d0a009653643e98d4e8a0f2",
+      "lastModificationDate": 1686767397506,
+      "contentHash": "574d31cd68ad5e9be5e3ffdc7594317a",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -1989,8 +1989,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1686765737515,
-      "contentHash": "efe24edcbe217783cf48532ecb2f7175",
+      "lastModificationDate": 1686767471853,
+      "contentHash": "44b7041b1cfb1672b87745a48b93a5c5",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {

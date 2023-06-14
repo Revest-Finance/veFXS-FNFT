@@ -187,7 +187,13 @@ contract veFXSRevest is Test {
 
         //Calculating expiration time for new extending time
         time = block.timestamp;
-        expiration = time + (4 * 365 * 60 * 60 * 24 - 3600); // 4 year in future in future
+        uint overly_expiration = time + (5 * 365 * 60 * 60 * 24 - 3600); //5 years in the future
+        expiration = time + (4 * 365 * 60 * 60 * 24 - 3600); // 4 years in future in future
+
+        //attempt to extend FNFT Maturity more than 2 year max
+        hoax(fxsWhale);
+        vm.expectRevert("Max lockup is 4 years");
+        revest.extendFNFTMaturity(fnftId, overly_expiration);
 
         //Attempt to extend FNFT Maturity
         hoax(fxsWhale);
