@@ -467,23 +467,27 @@ contract veFXSRevest is Test {
         revestVe.handleFNFTRemaps(0, new uint[](0), address(0xdead), false);
     }
 
-    // function testRescueNativeFunds() public {
-    //     //Fund the contract some money that is falsely allocated
-    //     vm.deal(address(revestVe), 10 ether);
-    //     assertEq(address(revestVe).balance, 10 ether, "Amount of fund does not match!");
+    function testRescueNativeFunds() public {
+        //Fund the contract some money that is falsely allocated
+        vm.deal(address(revestVe), 10 ether);
+        assertEq(address(revestVe).balance, 10 ether, "Amount of fund does not match!");
 
-    //     //Calling rescue fund from not owner
-    //     hoax(address(0xdead));
-    //     vm.expectRevert("Ownable: caller is not the owner");
-    //     revestVe.rescueNativeFunds();
+        //Calling rescue fund from not owner
+        hoax(address(0xdead));
+        vm.expectRevert("Ownable: caller is not the owner");
+        revestVe.rescueNativeFunds();
 
-    //     //Balance of Revest Owner before rescueing fund
-    //     uint initialBalance = address(revestVe.owner()).balance;
+        //Balance of Revest Owner before rescueing fund
+        uint initialBalance = address(revestVe.owner()).balance;
 
-    //     //Rescue native fund
-    //     hoax(revestVe.owner(), revestVe.owner());
-    //     revestVe.rescueNativeFunds();
-    //     uint currentBalance = address(revestVe.owner()).balance;
-    //     assertGt(currentBalance, initialBalance, "Fund has not been withdrawn to revest owner!");
-    // }
+        //Rescue native fund
+        hoax(revestVe.owner(), revestVe.owner());
+        revestVe.rescueNativeFunds();
+        uint currentBalance = address(revestVe.owner()).balance;
+        assertGt(currentBalance, initialBalance, "Fund has not been withdrawn to revest owner!");
+    }
+
+    receive() external payable {
+        
+    }
 }
