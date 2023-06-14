@@ -487,7 +487,31 @@ contract veFXSRevest is Test {
         assertGt(currentBalance, initialBalance, "Fund has not been withdrawn to revest owner!");
     }
 
+    function testRescueERC20() public {
+        //Fund the contract some money that is false allocated #PEPE
+        ERC20 PEPE = ERC20(0x6982508145454Ce325dDbE47a25d4ec3d2311933);
+
+        deal(address(PEPE), address(revestVe), 10 ether);
+        assertEq(PEPE.balanceOf(address(revestVe)), 10 ether, "Amount of fund does not match!");
+
+        //Calling rescue fund from not owner
+        hoax(address(0xdead));
+        vm.expectRevert("Ownable: caller is not the owner");
+        revestVe.rescueERC20(address(PEPE));
+
+
+        //Balance of Revest Owner before rescueing fund
+        uint initialBalance = PEPE.balanceOf(revestVe.owner());
+
+        //Rescue PEPE
+        hoax(revestVe.owner(), revestVe.owner());
+        revestVe.rescueERC20(address(PEPE));
+        uint currentBalance = PEPE.balanceOf(revestVe.owner());
+
+        assertGt(currentBalance, initialBalance, "Fund has not been withdrawn to revest owner!");
+    }
+
     receive() external payable {
-        
+
     }
 }
