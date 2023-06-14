@@ -78,7 +78,7 @@ contract VestedEscrowSmartWallet {
         address distributor, 
         address caller
     ) external onlyMaster {
-        // TODO: Implement
+        // TODO: Implement fees
         IYieldDistributor(distributor).getYield();
         address token = IVotingEscrow(votingEscrow).token();
         uint bal = IERC20(token).balanceOf(address(this));

@@ -50,7 +50,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     address public DISTRIBUTOR;
 
     // Revest Admin Account 
-    address public ADMIN;
+    address public ADMIN_WALLET;
 
     // Template address for VE wallets
     address public immutable TEMPLATE;
@@ -61,26 +61,15 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Constant used for approval
     uint private constant MAX_INT = 2 ** 256 - 1;
 
-    uint private constant WEEK = 7 * 86400;
-
     uint private constant MAX_LOCKUP = 4 * 365 days;
 
-    uint private constant FREE_AMOUNT = 100 ether;
+    uint private constant PERCENTAGE = 1000;
 
-    uint private constant PERCENTAGE = 100;
+    // Performance fee
+    uint private constant PERFORMANCE_FEE = 100;
 
-    // Fee tracker
-    uint private weiFee = 1 ether;
-
-    //% fee when lock token (fee = 1 means 1% of the lock up amount will be taken as fee)
-    uint private fee;
-
-    // For tracking if a given contract has approval for token
-    mapping (address => mapping (address => bool)) private approvedContracts;
-
-    // For tracking wallet approvals for tokens
-    // Works for up to 256 tokens
-    mapping (address => mapping (uint => uint)) private walletApprovals;
+    // Management fee
+    uint private constant MANAGEMENT_FEE = 5;
 
     // FXS contract
     address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
@@ -99,8 +88,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         DISTRIBUTOR = _distributor;
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(REWARD_TOKEN);
         TEMPLATE = address(wallet);
-        ADMIN = _revestAdmin;
-        fee = 10;
+        ADMIN_WALLET = _revestAdmin;
     }
 
     modifier onlyRevestController() {
@@ -130,9 +118,11 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint amountToLock
     ) external nonReentrant returns (uint fnftId) {   
         //charging fee as FXS token
-        uint FXSFee = amountToLock * fee / PERCENTAGE; // Make constant
-        IERC20(FXS).safeTransferFrom(msg.sender, ADMIN, FXSFee);
-        amountToLock -= FXSFee;
+        uint fxsFee = amountToLock * MANAGEMENT_FEE / PERCENTAGE; // Make constant
+        IERC20(FXS).safeTransferFrom(msg.sender, ADMIN_WALLET, fxsFee);
+        amountToLock -= fxsFee;
+
+        // TODO: Emit fee claimed event
 
         /// Mint FNFT
         {
@@ -187,11 +177,15 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint
     ) external override nonReentrant {
         // Security check to make sure the Revest vault is the only contract that can call this method
+        // TODO: vault should be immutable
         address vault = IAddressRegistry(addressRegistry).getTokenVault();
         require(_msgSender() == vault, 'E016');
 
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
+        
+        // TODO: Claim fee properly here
+        wallet.claimRewards(VOTING_ESCROW, DISTRIBUTOR, msg.sender);
 
         wallet.withdraw(VOTING_ESCROW);
         uint balance = IERC20(TOKEN).balanceOf(address(this));
@@ -258,23 +252,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         wallet.cleanMemory();
     }
 
-    // Utility functions
-    function _isApproved(address wallet, address feeDistro) internal view returns (bool) {
-        uint256 _id = uint256(uint160(feeDistro));
-        uint256 _mask = 1 << _id % 256;
-        return (walletApprovals[wallet][_id / 256] & _mask) != 0;
-    }
-
-    function _setIsApproved(address wallet, address feeDistro, bool _approval) internal {
-        uint256 _id = uint256(uint160(feeDistro));
-        if (_approval) {
-            walletApprovals[wallet][_id / 256] |= 1 << _id % 256;
-        } else {
-            walletApprovals[wallet][_id / 256] &= 0 << _id % 256;
-        }
-    }
-
-
     /// Admin Functions
 
     function setAddressRegistry(address addressRegistry_) external override onlyOwner {
@@ -283,7 +260,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     
     function setRevestAdmin(address _admin) external onlyOwner {
         console.log("Setting revest admin to: ", _admin);
-        ADMIN = _admin;
+        ADMIN_WALLET = _admin;
     }
 
     function setWeiFee(uint _fee) external onlyOwner {
@@ -323,7 +300,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         return METADATA;
     }
 
-    // Will give balance in xLQDR
+    // Will give balance in veFXS
     function getValue(uint fnftId) public view override returns (uint) {
         return IVotingEscrow(VOTING_ESCROW).balanceOf(Clones.predictDeterministicAddress(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId))));
     }
