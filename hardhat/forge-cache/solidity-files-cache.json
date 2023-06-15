@@ -12,9 +12,49 @@
     ]
   },
   "files": {
+    "contracts/Revest.sol": {
+      "lastModificationDate": 1686870001295,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/Revest.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": null,
+      "artifacts": {
+        "Revest": {
+          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Revest.sol/Revest.json"
+        }
+      }
+    },
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1686767397506,
-      "contentHash": "574d31cd68ad5e9be5e3ffdc7594317a",
+      "lastModificationDate": 1686870404124,
+      "contentHash": "8eece8a4aacbf66ef7975ae0ae4f4672",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -124,8 +164,8 @@
       }
     },
     "contracts/VestedEscrowSmartWallet.sol": {
-      "lastModificationDate": 1686242413459,
-      "contentHash": "13a91b2b974c1ead5f4188ca9aa51ceb",
+      "lastModificationDate": 1686853565474,
+      "contentHash": "33206b0460da87872d291ed46c4a00fe",
       "sourceName": "contracts/VestedEscrowSmartWallet.sol",
       "solcConfig": {
         "settings": {
@@ -1989,8 +2029,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1686767471853,
-      "contentHash": "44b7041b1cfb1672b87745a48b93a5c5",
+      "lastModificationDate": 1686871079393,
+      "contentHash": "1d07b3e4f6eb5e57c41c527d5e1a91b4",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {

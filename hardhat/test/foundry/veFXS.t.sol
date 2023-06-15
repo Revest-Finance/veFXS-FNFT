@@ -42,6 +42,11 @@ contract veFXSRevest is Test {
     address admin = makeAddr("admin");
     address fxsWhale = 0xd53E50c63B0D549f142A2dCfc454501aaA5B7f3F;
 
+    uint MANAGEMENT_FEE = 5;
+    uint PERFORMANCE_FEE = 100;
+
+    uint immutable PERCENTAGE = 1000;
+   
     uint fnftId;
     uint fnftId2;
 
@@ -74,12 +79,13 @@ contract veFXSRevest is Test {
     /**
      * This test case focus on if the user is able to mint the FNFT after deposit 1 token of FXS into veFXS 
      */
-    function testMint() public {
-        uint time = block.timestamp;
-    
-        //Outline the parameters that will govern the FNFT
-        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-        uint amount = 1.1e18; //FXS 
+    function testMint(uint amount) public {
+        //Fuzz Set-up
+        uint fxsBalance = FXS.balanceOf(address(fxsWhale));
+        vm.assume(amount >= 1e18 && amount <= fxsBalance);
+
+        //expiration for fnft config 
+        uint expiration = block.timestamp + (2 * 365 * 60 * 60 * 24); // 2 years 
 
         //Mint the FNFT
         hoax(fxsWhale);
@@ -103,11 +109,13 @@ contract veFXSRevest is Test {
     /**
      * This test case focus on if when the admin can receive the fee
      */
-    function testReceiveFee() public {
-        //Outline the parameters that will govern the FNFT
-        uint time = block.timestamp;
-        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-        uint amount = 1e18; //FXS  
+    function testReceiveManagementFee(uint amount) public {
+        //Fuzz Set-up
+        uint fxsBalance = FXS.balanceOf(address(fxsWhale));
+        vm.assume(amount >= 1e18 && amount <= fxsBalance);
+
+        //Expiration for fnft config 
+        uint expiration = block.timestamp + (2 * 365 * 60 * 60 * 24); // 2 years 
 
         //Balance of admin before the minting the lock
         uint oriBal = FXS.balanceOf(address(admin));
@@ -119,7 +127,8 @@ contract veFXSRevest is Test {
         fnftId = revestVe.lockTokens(expiration, amount);
 
         //Check
-        assertEq(FXS.balanceOf(address(admin)), 1e17, "Amount of fee received is incorrect!"); //10% fee of amount 1e18 is 1e17
+        uint expectedFee = amount * MANAGEMENT_FEE / PERCENTAGE;
+        assertEq(FXS.balanceOf(address(admin)), expectedFee, "Amount of fee received is incorrect!"); //10% fee of amount 1e18 is 1e17
 
         //Logging
         console.log("FXS balance of revest admin before minting: ", oriBal);
@@ -129,11 +138,15 @@ contract veFXSRevest is Test {
     /**
      * This test case focus on if user can deposit additional amount into the vault
      */
-    function testDepositAdditional() public {
-        // Outline the parameters that will govern the FNFT
-        uint time = block.timestamp;
-        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-        uint amount = 1e18; //FXS  
+    function testDepositAdditional(uint amount, uint additionalDepositAmount) public {
+        //Fuzz Set-up
+        uint fxsBalance = FXS.balanceOf(address(fxsWhale));
+        vm.assume(amount >= 1e18 && amount <= fxsBalance);
+        uint additionalDepositMax = fxsBalance - amount;
+        vm.assume(additionalDepositAmount >0 && additionalDepositAmount <=additionalDepositMax);
+
+        //Expiration for fnft config 
+        uint expiration = block.timestamp + (2 * 365 * 60 * 60 * 24); // 2 years 
 
         //Minting the FNFT
         hoax(fxsWhale);
@@ -150,9 +163,9 @@ contract veFXSRevest is Test {
 
         //Deposit additional fund for FNFT
         hoax(fxsWhale);
-        FXS.approve(address(revestVe), amount);
+        FXS.approve(address(revestVe), additionalDepositAmount);
         hoax(fxsWhale);
-        revest.depositAdditionalToFNFT(fnftId, amount, 1);
+        revest.depositAdditionalToFNFT(fnftId, additionalDepositAmount, 1);
 
         //Check
         assertGt(revestVe.getValue(fnftId), oriVeFXS, "Additional deposit not success!");
@@ -178,6 +191,10 @@ contract veFXSRevest is Test {
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
+        //Checking initial maturity of the lock after deposit
+        ILockManager lockManager = ILockManager(IAddressRegistry(Provider).getLockManager());
+        uint initialMaturity = lockManager.fnftIdToLock(fnftId).timeLockExpiry;
+
         //Skipping two weeks of timestamp
         uint timeSkip = (2 * 7 * 60 * 60 * 24); // 2 week years
         skip(timeSkip);
@@ -198,6 +215,16 @@ contract veFXSRevest is Test {
         //Attempt to extend FNFT Maturity
         hoax(fxsWhale);
         revest.extendFNFTMaturity(fnftId, expiration);
+
+        //Checking after-extend maturity of the lock after deposit
+        uint currentMaturity = lockManager.fnftIdToLock(fnftId).timeLockExpiry;
+
+        //Check
+        assertGt(currentMaturity, initialMaturity);
+
+        //Locking
+        console.log("Initual Maturity: ", initialMaturity);
+        console.log("Current Maturity: ", currentMaturity);
     }
 
     /**
@@ -284,12 +311,15 @@ contract veFXSRevest is Test {
         uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
         uint amount = 1e18; //FXS  
 
+        // uint preBal = vfxs.BalanceOf(alice);
+
         //Minting the FNFT and Checkpoint for Yield Distributor
         hoax(fxsWhale);
         FXS.approve(address(revestVe), amount);
         hoax(fxsWhale);
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
+
         // hoax(fxsWhale);
         // IYieldDistributor(DISTRIBUTOR).checkpointOtherUser(smartWalletAddress);
 
@@ -396,7 +426,7 @@ contract veFXSRevest is Test {
 
     function testRevestAdmin() public {
         //Getter Method test
-        address revestAdmin = revestVe.ADMIN();
+        address revestAdmin = revestVe.ADMIN_WALLET();
         assertEq(revestAdmin, admin, "Revest Admin is incorrect!");
 
         //Calling from non-owner
@@ -407,7 +437,7 @@ contract veFXSRevest is Test {
         //Setter Method test
         hoax(revestVe.owner());
         revestVe.setRevestAdmin(address(0xdead));
-        address newAddressRegistry = revestVe.ADMIN();
+        address newAddressRegistry = revestVe.ADMIN_WALLET();
         assertEq(newAddressRegistry, address(0xdead), "New revest admin is not set correctly");
     }
 
@@ -417,7 +447,7 @@ contract veFXSRevest is Test {
         assertEq(asset, VOTING_ESCROW, "Asset/Underlying Ve contract is incorrect");
     }
 
-    function testWeiFee() public {
+    function testPerformanceFee() public {
         //Getter Method  test
         uint weiFee = revestVe.getFlatWeiFee(fxsWhale);
         assertEq(weiFee, 1 ether, "Current weiFee is incorrect!");
@@ -425,16 +455,16 @@ contract veFXSRevest is Test {
         //Calling from non-owner
         hoax(address(0xdead));
         vm.expectRevert("Ownable: caller is not the owner");
-        revestVe.setWeiFee(2 ether);
+        revestVe.setPerformanceFee(2 ether);
         
          //Setter Method test
         hoax(revestVe.owner());
-        revestVe.setWeiFee(2 ether);
+        revestVe.setPerformanceFee(2 ether);
         uint newWeiFee = revestVe.getFlatWeiFee(fxsWhale);
         assertEq(newWeiFee, 2 ether, "New wei fei is not set correctly");
     }
 
-    function testERC20Fee() public {
+    function testManagementFee() public {
         //Getter Method
         uint fee = revestVe.getERC20Fee(fxsWhale);
         assertEq(fee, 10, "Current fee percentage is incorrect!"); //10%
@@ -442,11 +472,11 @@ contract veFXSRevest is Test {
         //Calling from non-owner
         hoax(address(0xdead));
         vm.expectRevert("Ownable: caller is not the owner");
-        revestVe.setFeePercentage(20);
-
+        revestVe.setManagementFee(20);
+ 
         //Setter Method test
         hoax(revestVe.owner());
-        revestVe.setFeePercentage(20);
+        revestVe.setManagementFee(20);
         uint newFee = revestVe.getERC20Fee(fxsWhale);
         assertEq(newFee, 20, "New fee percentage is not set correctly!");
     }

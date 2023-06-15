@@ -12,3 +12,4 @@ bin
 hardhat/artifacts/
 hardhat/cache/
 hardhat/yarn.lock
+hardhat/lcov.info
