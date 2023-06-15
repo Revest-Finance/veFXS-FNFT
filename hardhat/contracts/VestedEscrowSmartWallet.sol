@@ -17,7 +17,13 @@ contract VestedEscrowSmartWallet {
 
     address private immutable MASTER;
 
+    address private immutable LOCK_TOKEN;
+
     address private immutable REWARD_TOKEN;
+
+    address private immutable VOTING_ESCROW;
+
+    address private immutable DISTRIBUTOR;
 
     uint private constant feeNumerator = 4;
 
@@ -25,15 +31,20 @@ contract VestedEscrowSmartWallet {
 
     uint private constant feeDenominator = 100;
 
+    // Performance fee
+    uint private constant PERCENTAGE = 1000;
+
     //Hardcoded for MVP
     address public constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
     address public constant veFXS = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
    
 
-
-    constructor(address _rewardToken) {
+    constructor(address _votingEscrow, address _distributor) {
         MASTER = msg.sender;
-        REWARD_TOKEN = _rewardToken;
+        VOTING_ESCROW = _votingEscrow;
+        LOCK_TOKEN = IVotingEscrow(_votingEscrow).token();
+        REWARD_TOKEN = IVotingEscrow(_votingEscrow).token();
+        DISTRIBUTOR = _distributor;
     }
 
     modifier onlyMaster() {
@@ -43,10 +54,10 @@ contract VestedEscrowSmartWallet {
 
     function createLock(uint value, uint unlockTime, address votingEscrow, address distributor) external onlyMaster {
         // Only callable from the parent contract, transfer tokens from user -> parent, parent -> VE
-        address token = IVotingEscrow(votingEscrow).token();
+
         // Single-use approval system
-        if(IERC20(token).allowance(address(this), votingEscrow) != MAX_INT) {
-            IERC20(token).approve(votingEscrow, MAX_INT);
+        if(IERC20(LOCK_TOKEN).allowance(address(this), votingEscrow) != MAX_INT) {
+            IERC20(LOCK_TOKEN).approve(votingEscrow, MAX_INT);
         }
         // Create the lock
         IVotingEscrow(votingEscrow).create_lock(value, unlockTime);
@@ -55,13 +66,15 @@ contract VestedEscrowSmartWallet {
     }
 
 
-    function increaseAmount(uint value, address votingEscrow) external onlyMaster {
+    function increaseAmount(uint value, address votingEscrow, address distributor) external onlyMaster {
         IVotingEscrow(votingEscrow).increase_amount(value);
+        IYieldDistributor(distributor).checkpoint();
         _cleanMemory();
     }
 
-    function increaseUnlockTime(uint unlockTime, address votingEscrow) external onlyMaster {
+    function increaseUnlockTime(uint unlockTime, address votingEscrow, address distributor) external onlyMaster {
         IVotingEscrow(votingEscrow).increase_unlock_time(unlockTime);
+        IYieldDistributor(distributor).checkpoint();
         _cleanMemory();
     }
 
@@ -74,15 +87,19 @@ contract VestedEscrowSmartWallet {
     }
 
     function claimRewards(
-        address votingEscrow,
-        address distributor, 
-        address caller
+        address caller, 
+        address rewards, 
+        uint performanceFee //address that receives the fee 
     ) external onlyMaster {
-        // TODO: Implement fees
-        IYieldDistributor(distributor).getYield();
-        address token = IVotingEscrow(votingEscrow).token();
-        uint bal = IERC20(token).balanceOf(address(this));
-        IERC20(token).safeTransfer(caller, bal);
+        uint bal = IERC20(REWARD_TOKEN).balanceOf(address(this));
+
+        //claiming fee
+        uint fee = bal * performanceFee / PERCENTAGE;
+        bal -= fee;
+        IERC20(REWARD_TOKEN).safeTransfer(rewards, fee);
+
+        //distribute yield claim
+        IERC20(REWARD_TOKEN).safeTransfer(caller, bal);
         _cleanMemory();
     }
 
