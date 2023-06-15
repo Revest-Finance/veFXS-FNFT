@@ -46,6 +46,8 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Token used for voting escrow
     address public immutable TOKEN;
 
+    address public immutable REWARD_TOKEN;
+
     // Distributor for rewards address
     address public immutable DISTRIBUTOR;
 
@@ -71,9 +73,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Management fee
     uint private MANAGEMENT_FEE = 5;
 
-    // FXS contract
-    address private constant FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
-    address public constant REWARD_TOKEN = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0; //the same with deposit token
     // Control variable to let all users utilize smart wallets for proxy execution
     bool public globalProxyEnabled;
 
@@ -85,6 +84,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         addressRegistry = _provider;
         VOTING_ESCROW = _vE;
         TOKEN = IVotingEscrow(_vE).token();
+        REWARD_TOKEN = IVotingEscrow(_vE).token();
         DISTRIBUTOR = _distributor;
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(_vE, _distributor);
         TEMPLATE = address(wallet);
@@ -115,9 +115,9 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint endTime,
         uint amountToLock
     ) external nonReentrant returns (uint fnftId) {   
-        //charging fee as FXS token
+        //Taking management fee
         uint fxsFee = amountToLock * MANAGEMENT_FEE / PERCENTAGE; // Make constant
-        IERC20(FXS).safeTransferFrom(msg.sender, ADMIN_WALLET, fxsFee);
+        IERC20(TOKEN).safeTransferFrom(msg.sender, ADMIN_WALLET, fxsFee);
         amountToLock -= fxsFee;
 
         // TODO: Emit fee claimed event
@@ -347,7 +347,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         return PERFORMANCE_FEE;
     }
 
-    ///This plays the same role as getFeePercentage(address)
     function getERC20Fee(address) external view override returns (uint) {
         return MANAGEMENT_FEE;
     }
