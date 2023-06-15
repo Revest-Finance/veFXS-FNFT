@@ -25,12 +25,6 @@ contract VestedEscrowSmartWallet {
 
     address private immutable DISTRIBUTOR;
 
-    uint private constant feeNumerator = 4;
-
-    uint private constant feeNumerator2 = 2;
-
-    uint private constant feeDenominator = 100;
-
     // Performance fee
     uint private constant PERCENTAGE = 1000;
 
