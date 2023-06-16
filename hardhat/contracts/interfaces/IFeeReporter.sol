@@ -9,4 +9,6 @@ interface IFeeReporter {
 
     function getERC20Fee(address asset) external view returns (uint);
 
+    event FeeCollection(address indexed token, uint indexed amount);
+
 }
