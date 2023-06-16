@@ -54,6 +54,9 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     // Revest Admin Account 
     address public ADMIN_WALLET;
 
+    // Vault address
+    address public immutable VAULT;
+
     // Template address for VE wallets
     address public immutable TEMPLATE;
 
@@ -89,6 +92,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         VestedEscrowSmartWallet wallet = new VestedEscrowSmartWallet(_vE, _distributor);
         TEMPLATE = address(wallet);
         ADMIN_WALLET = _revestAdmin;
+        VAULT =  IAddressRegistry(_provider).getTokenVault();
     }
 
     modifier onlyRevestController() {
@@ -121,6 +125,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         amountToLock -= fxsFee;
 
         // TODO: Emit fee claimed event
+        emit FeeCollection(address(TOKEN), fxsFee);
 
         /// Mint FNFT
         {
@@ -162,7 +167,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
             SmartWalletWhitelistV2(IVotingEscrow(VOTING_ESCROW).smart_wallet_checker()).approveWallet(smartWallAdd);
 
             // We deposit our funds into the wallet
-            wallet.createLock(amountToLock, endTime, VOTING_ESCROW, DISTRIBUTOR);
+            wallet.createLock(amountToLock, endTime);
             emit DepositERC20OutputReceiver(msg.sender, TOKEN, amountToLock, fnftId, abi.encode(smartWallAdd));
         }
     }
@@ -175,20 +180,16 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         uint
     ) external override nonReentrant {
         // Security check to make sure the Revest vault is the only contract that can call this method
-        // TODO: vault should be immutable
-        address vault = IAddressRegistry(addressRegistry).getTokenVault();
-        require(_msgSender() == vault, 'E016');
+        require(_msgSender() == VAULT, 'E016');
 
-       
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
         
         // Claim fee and distribute output
-        address rewardsAdd = IAddressRegistry(addressRegistry).getRewardsHandler();
-        wallet.claimRewards(msg.sender, rewardsAdd, PERFORMANCE_FEE);
+        wallet.claimRewards(owner, ADMIN_WALLET, PERFORMANCE_FEE);
 
         // Withdraw the fund
-        wallet.withdraw(VOTING_ESCROW);
+        wallet.withdraw();
         uint balance = IERC20(TOKEN).balanceOf(address(this));
         IERC20(TOKEN).safeTransfer(owner, balance);
 
@@ -217,7 +218,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         require(expiration - block.timestamp <= MAX_LOCKUP, 'Max lockup is 4 years');
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
-        wallet.increaseUnlockTime(expiration, VOTING_ESCROW, DISTRIBUTOR);
+        wallet.increaseUnlockTime(expiration);
     }
 
     /// Prerequisite: User has approved this contract to spend tokens on their behalf
@@ -225,7 +226,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
         IERC20(TOKEN).safeTransferFrom(caller, smartWallAdd, amountToDeposit);
-        wallet.increaseAmount(amountToDeposit, VOTING_ESCROW, DISTRIBUTOR);
+        wallet.increaseAmount(amountToDeposit);
     }
 
     // Not applicable
@@ -238,9 +239,7 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     ) external override onlyTokenHolder(fnftId) {
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
-
-        address rewardsAdd = IAddressRegistry(addressRegistry).getRewardsHandler();
-        wallet.claimRewards(msg.sender, rewardsAdd, PERFORMANCE_FEE);
+        wallet.claimRewards(msg.sender, ADMIN_WALLET, PERFORMANCE_FEE);
     }       
 
     function proxyExecute(
