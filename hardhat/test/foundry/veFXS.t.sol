@@ -23,7 +23,7 @@ interface Revest {
 }
 
 contract veFXSRevest is Test {
-    address public Provider = 0xd2c6eB7527Ab1E188638B86F2c14bbAd5A431d78;
+    address public PROVIDER = 0xd2c6eB7527Ab1E188638B86F2c14bbAd5A431d78;
     address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public VOTING_ESCROW = 0xc8418aF6358FFddA74e09Ca9CC3Fe03Ca6aDC5b0;
     address public veFXSAdmin = 0xB1748C79709f4Ba2Dd82834B8c82D4a505003f27;
@@ -54,7 +54,7 @@ contract veFXSRevest is Test {
 
 
     function setUp() public {
-        revestVe  = new RevestVeFXS(Provider, VOTING_ESCROW, DISTRIBUTOR, admin);
+        revestVe  = new RevestVeFXS(PROVIDER, VOTING_ESCROW, DISTRIBUTOR, admin);
         smartWalletChecker = new SmartWalletWhitelistV2(admin);
         
         hoax(admin, admin);
@@ -192,7 +192,7 @@ contract veFXSRevest is Test {
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
         //Checking initial maturity of the lock after deposit
-        ILockManager lockManager = ILockManager(IAddressRegistry(Provider).getLockManager());
+        ILockManager lockManager = ILockManager(IAddressRegistry(PROVIDER).getLockManager());
         uint initialMaturity = lockManager.fnftIdToLock(fnftId).timeLockExpiry;
 
         //Skipping two weeks of timestamp
@@ -228,7 +228,7 @@ contract veFXSRevest is Test {
     }
 
     /**
-     * This test case focus on if user can unlock and withdaw their fnft
+     * This test case focus on if user can unlock and withdaw their fnft, and plus claim fee
      */
     function testUnlockAndWithdraw() public {
         // Outline the parameters that will govern the FNFT
@@ -243,36 +243,51 @@ contract veFXSRevest is Test {
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
-        //Original balance of FXS after depositing the FNFT
+        //Original balance of FXS and after depositing the FNFT
         uint oriFXS = FXS.balanceOf(fxsWhale);
+        uint oriFeeReceived = FXS.balanceOf(address(admin));
 
         //Destroying teh address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
 
         //Skipping two weeks of timestamp
-        uint timeSkip = (2 * 365 * 60 * 60 * 24 + 1); // 2 week years
+        uint timeSkip = (2 * 365 * 60 * 60 * 24 + 1); // 2 years
         skip(timeSkip);
         
-         //Destroy the address of smart wallet for testing purpose
+        //Destroy the address of smart wallet for testing purpose
         destroyAccount(smartWalletAddress, address(admin));
+
+        //Yield Claim check
+        hoax(fxsWhale);
+        uint yieldToClaim = IYieldDistributor(DISTRIBUTOR).earned(smartWalletAddress);
 
         //Unlocking and withdrawing the NFT
         hoax(fxsWhale);
         revest.withdrawFNFT(fnftId, 1);
-        uint currentFXS = FXS.balanceOf(fxsWhale);
+        
+        //Balance of FXS after claiming yield
+        uint curFXS = FXS.balanceOf(fxsWhale);
+        uint curFeeReceived = FXS.balanceOf(address(admin));
+
+        // Fee
+        uint performanceFee = yieldToClaim * PERFORMANCE_FEE / PERCENTAGE;
+        uint managementFee = amount * MANAGEMENT_FEE / PERCENTAGE;
 
         //Check
-        assertEq(currentFXS - oriFXS, 9e17, "Withdraw amount does not match!");
+        assertEq(curFXS, oriFXS + amount + yieldToClaim - performanceFee - managementFee, "Does not receive enough yield!");
+        assertGt(curFeeReceived, oriFeeReceived, "Admin does not receieve performance fee!");
 
         //Logging
         console.log("Original balance of FXS: ", oriFXS);
-        console.log("Current balance of FXS: ", currentFXS);
+        console.log("Current balance of FXS: ", curFXS);
+        console.log("Performance Fee: ", performanceFee);
+        console.log("Management Fee: ", managementFee);
     }
 
     // // /**
     // //  * Tgus test case focus on testing if the traditional wallet work on yield claiming 
     // //  */
-    function testClaimYieldOnTraditionalWallet() public {
+    function testTraditionalWalletClaimYield() public {
          //Testing normal contract claim yield
         console.log("Current timestamp: ", block.timestamp);
         console.log("Original Yield: ", IYieldDistributor(DISTRIBUTOR).yields(smartWalletAddress));
@@ -305,13 +320,13 @@ contract veFXSRevest is Test {
     /**
      * This test case focus on if user can receive yield from their fnft
      */
-    function testClaimYield() public {
-        // Outline the parameters that will govern the FNFT
-        uint time = block.timestamp;
-        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-        uint amount = 1e18; //FXS  
+    function testClaimYield(uint amount) public {
+        //Fuzz Set-up
+        uint fxsBalance = FXS.balanceOf(address(fxsWhale));
+        vm.assume(amount >= 1e18 && amount <= fxsBalance);
 
-        // uint preBal = vfxs.BalanceOf(alice);
+        //Expiration for fnft config 
+        uint expiration = block.timestamp + (2 * 365 * 60 * 60 * 24); // 2 years 
 
         //Minting the FNFT and Checkpoint for Yield Distributor
         hoax(fxsWhale);
@@ -320,11 +335,9 @@ contract veFXSRevest is Test {
         fnftId = revestVe.lockTokens(expiration, amount);
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
-        // hoax(fxsWhale);
-        // IYieldDistributor(DISTRIBUTOR).checkpointOtherUser(smartWalletAddress);
-
         //Original balance of FXS before claiming yield
         uint oriFXS = FXS.balanceOf(fxsWhale);
+        uint oriFeeReceived = FXS.balanceOf(address(admin));
 
         //Skipping one years of timestamp
         uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
@@ -343,15 +356,23 @@ contract veFXSRevest is Test {
         
         //Balance of FXS after claiming yield
         uint curFXS = FXS.balanceOf(fxsWhale);
+        uint curFeeReceived = FXS.balanceOf(address(admin));
+
+        //Performance Fee
+        uint performanceFee = yieldToClaim * PERFORMANCE_FEE / PERCENTAGE;
 
         //Checker
         assertGt(yieldToClaim, 0, "Yield should be greater than 0!");
-        assertEq(curFXS, oriFXS + yieldToClaim, "Does not receive enough yield!");
+        assertEq(curFXS, oriFXS + yieldToClaim - performanceFee, "Does not receive enough yield!");
+        assertGt(curFeeReceived, oriFeeReceived, "Admin does not receieve performance fee!");
 
         //Console
         console.log("Yield to claim: ", yieldToClaim);
-        console.log("Original balance of FXS: ", oriFXS);
-        console.log("Current balance of FXS: ", curFXS);
+        console.log("Original balance of FXS from user: ", oriFXS);
+        console.log("Original balance of FXS from rewardHandler: ", oriFeeReceived);
+        console.log("Performance fee: ", performanceFee);
+        console.log("Current balance of FXS from userS: ", curFXS);
+        console.log("Current balance of FXS from rewardHandler: ", curFeeReceived);
     }
 
      /**
@@ -391,7 +412,7 @@ contract veFXSRevest is Test {
         assertEq(rewardDesc, expectedRewardsDesc, "Reward description is incorrect!");
         assertEq(hasRewards, yieldToClaim > 0, "Encoded hasRewards is incorrect!");
         assertEq(token, address(FXS), "Encoded vault token is incorrect!");
-        assertEq(lockedBalance, 9e17, "Encoded locked balance is incorrect!");
+        assertEq(lockedBalance, 995000000000000000, "Encoded locked balance is incorrect!"); // 95% of amount, (5% of management fee)
 
         //Logging
         console.log(adr);
@@ -410,7 +431,7 @@ contract veFXSRevest is Test {
     function testAddressRegistry() public {
         //Getter Method test
         address addressRegistry = revestVe.getAddressRegistry();
-        assertEq(addressRegistry, Provider, "Address Registry is incorrect!");
+        assertEq(addressRegistry, PROVIDER, "Address Registry is incorrect!");
 
         //Calling from non-owner
         hoax(address(0xdead));
@@ -450,7 +471,7 @@ contract veFXSRevest is Test {
     function testPerformanceFee() public {
         //Getter Method  test
         uint weiFee = revestVe.getFlatWeiFee(fxsWhale);
-        assertEq(weiFee, 1 ether, "Current weiFee is incorrect!");
+        assertEq(weiFee, PERFORMANCE_FEE, "Current weiFee is incorrect!");
 
         //Calling from non-owner
         hoax(address(0xdead));
@@ -467,7 +488,7 @@ contract veFXSRevest is Test {
     function testManagementFee() public {
         //Getter Method
         uint fee = revestVe.getERC20Fee(fxsWhale);
-        assertEq(fee, 10, "Current fee percentage is incorrect!"); //10%
+        assertEq(fee, MANAGEMENT_FEE, "Current fee percentage is incorrect!"); //10%
 
         //Calling from non-owner
         hoax(address(0xdead));

@@ -12,49 +12,9 @@
     ]
   },
   "files": {
-    "contracts/Revest.sol": {
-      "lastModificationDate": 1686870001295,
-      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
-      "sourceName": "contracts/Revest.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [],
-      "versionRequirement": null,
-      "artifacts": {
-        "Revest": {
-          "0.8.20+commit.a1b79de6.Darwin.appleclang": "Revest.sol/Revest.json"
-        }
-      }
-    },
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1686870404124,
-      "contentHash": "8eece8a4aacbf66ef7975ae0ae4f4672",
+      "lastModificationDate": 1686943040209,
+      "contentHash": "59d78c8a7717c20e9078c46e73085146",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
@@ -164,8 +124,8 @@
       }
     },
     "contracts/VestedEscrowSmartWallet.sol": {
-      "lastModificationDate": 1686853565474,
-      "contentHash": "33206b0460da87872d291ed46c4a00fe",
+      "lastModificationDate": 1686934100988,
+      "contentHash": "5727e159690fdebc6f2c8dd5ff307f69",
       "sourceName": "contracts/VestedEscrowSmartWallet.sol",
       "solcConfig": {
         "settings": {
@@ -200,6 +160,7 @@
         "contracts/interfaces/IRewardsHandler.sol",
         "contracts/interfaces/IVotingEscrow.sol",
         "contracts/interfaces/IYieldDistributor.sol",
+        "lib/forge-std/src/console.sol",
         "node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
         "node_modules/@openzeppelin/contracts/utils/Address.sol",
@@ -336,8 +297,8 @@
       }
     },
     "contracts/interfaces/IFeeReporter.sol": {
-      "lastModificationDate": 1685381703218,
-      "contentHash": "6416f46547fd25e1e593b60562f59800",
+      "lastModificationDate": 1686931432290,
+      "contentHash": "94dcbc950be09830b921c67f51255323",
       "sourceName": "contracts/interfaces/IFeeReporter.sol",
       "solcConfig": {
         "settings": {
@@ -2029,8 +1990,8 @@
       }
     },
     "test/foundry/veFXS.t.sol": {
-      "lastModificationDate": 1686871079393,
-      "contentHash": "1d07b3e4f6eb5e57c41c527d5e1a91b4",
+      "lastModificationDate": 1686943524791,
+      "contentHash": "2596bf77fd1be08d73b48de110196e98",
       "sourceName": "test/foundry/veFXS.t.sol",
       "solcConfig": {
         "settings": {
