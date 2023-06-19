@@ -107,7 +107,7 @@ contract veFXSRevest is Test {
 
 
     /**
-     * This test case focus on if when the admin can receive the fee
+     * This test case focus on if the admin can receive the management fee up front
      */
     function testReceiveManagementFee(uint amount) public {
         //Fuzz Set-up
@@ -196,7 +196,7 @@ contract veFXSRevest is Test {
         uint initialMaturity = lockManager.fnftIdToLock(fnftId).timeLockExpiry;
 
         //Skipping two weeks of timestamp
-        uint timeSkip = (2 * 7 * 60 * 60 * 24); // 2 week years
+        uint timeSkip = (2 * 7 * 60 * 60 * 24); // 2 years
         skip(timeSkip);
 
         //Destroy the address of smart wallet for testing purpose
@@ -220,7 +220,7 @@ contract veFXSRevest is Test {
         uint currentMaturity = lockManager.fnftIdToLock(fnftId).timeLockExpiry;
 
         //Check
-        assertGt(currentMaturity, initialMaturity);
+        assertGt(currentMaturity, initialMaturity, "Maturity has not been changed");
 
         //Locking
         console.log("Initual Maturity: ", initialMaturity);
