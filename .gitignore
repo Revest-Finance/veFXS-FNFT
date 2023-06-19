@@ -13,3 +13,4 @@ hardhat/artifacts/
 hardhat/cache/
 hardhat/yarn.lock
 hardhat/lcov.info
+hardhat/forge-cache/solidity-files-cache.json

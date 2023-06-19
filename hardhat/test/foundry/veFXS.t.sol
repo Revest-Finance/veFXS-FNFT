@@ -54,6 +54,9 @@ contract veFXSRevest is Test {
 
 
     function setUp() public {
+        uint fork1 = vm.createFork("https://mainnet.infura.io/v3/08cfb263de5249ba9bb25868d93d0d45", 17389890);
+        vm.selectFork(fork1);
+
         revestVe  = new RevestVeFXS(PROVIDER, VOTING_ESCROW, DISTRIBUTOR, admin);
         smartWalletChecker = new SmartWalletWhitelistV2(admin);
         
@@ -340,7 +343,7 @@ contract veFXSRevest is Test {
         uint oriFeeReceived = FXS.balanceOf(address(admin));
 
         //Skipping one years of timestamp
-        uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
+        uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); // 1 year
         skip(timeSkip);
 
         //Destroy the address of smart wallet for testing purpose
@@ -381,7 +384,7 @@ contract veFXSRevest is Test {
     function testOutputDisplay() public {
         // Outline the parameters that will govern the FNFT
         uint time = block.timestamp;
-        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
+        uint expiration = time + (3 * 365 * 60 * 60 * 24); // 2 years 
         uint amount = 1e18; //FXS  
 
         //Minting the FNFT and Checkpoint for Yield Distributor
@@ -392,7 +395,7 @@ contract veFXSRevest is Test {
         smartWalletAddress = revestVe.getAddressForFNFT(fnftId);
 
         //Skipping one years of timestamp
-        uint timeSkip = (1 * 365 * 60 * 60 * 24 + 1); //s 2 years
+        uint timeSkip = (2 * 365 * 60 * 60 * 24 + 1); //s 2 years
         skip(timeSkip);
 
          //Yield Claim check
@@ -415,11 +418,12 @@ contract veFXSRevest is Test {
         assertEq(lockedBalance, 995000000000000000, "Encoded locked balance is incorrect!"); // 95% of amount, (5% of management fee)
 
         //Logging
-        console.log(adr);
-        console.logString(rewardDesc);
-        console.log(hasRewards);
-        console.log(maxExtensions);
-        console.log(token);
+        console.log("Yield to claim: ", yieldToClaim);
+        console.log("Address: ", adr);
+        console.log("Reward Description: ", rewardDesc);
+        console.log("Has Reward or not: ", hasRewards);
+        console.log("Max Extensions: ", maxExtensions);
+        console.log("Token : ", token);
         console.logInt(lockedBalance);
     }
 
