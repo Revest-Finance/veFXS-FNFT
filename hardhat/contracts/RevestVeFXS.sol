@@ -225,6 +225,12 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
     function handleAdditionalDeposit(uint fnftId, uint amountToDeposit, uint, address caller) external override nonReentrant onlyRevestController {
         address smartWallAdd = Clones.cloneDeterministic(TEMPLATE, keccak256(abi.encode(TOKEN, fnftId)));
         VestedEscrowSmartWallet wallet = VestedEscrowSmartWallet(smartWallAdd);
+
+        //Taking management fee
+        uint fxsFee = amountToDeposit * MANAGEMENT_FEE / PERCENTAGE; // Make constant
+        IERC20(TOKEN).safeTransferFrom(msg.sender, ADMIN_WALLET, fxsFee);
+        amountToDeposit -= fxsFee;
+        
         IERC20(TOKEN).safeTransferFrom(caller, smartWallAdd, amountToDeposit);
         wallet.increaseAmount(amountToDeposit);
     }
@@ -331,8 +337,6 @@ contract RevestVeFXS is IOutputReceiverV3, Ownable, ERC165, IFeeReporter, Reentr
         (int128 lockedBalance, ) = IVotingEscrow(VOTING_ESCROW).locked(smartWallet);
         displayData = abi.encode(smartWallet, rewardsDesc, hasRewards, maxExtension, TOKEN, lockedBalance);
     }
-
-    
 
     function getAddressRegistry() external view override returns (address) {
         return addressRegistry;
