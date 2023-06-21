@@ -13,8 +13,8 @@
   },
   "files": {
     "contracts/RevestVeFXS.sol": {
-      "lastModificationDate": 1686943040209,
-      "contentHash": "59d78c8a7717c20e9078c46e73085146",
+      "lastModificationDate": 1687330533393,
+      "contentHash": "a2f09c3b7d76b68e2173a1bf78c5cded",
       "sourceName": "contracts/RevestVeFXS.sol",
       "solcConfig": {
         "settings": {
