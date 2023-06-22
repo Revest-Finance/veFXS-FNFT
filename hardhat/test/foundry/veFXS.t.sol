@@ -101,6 +101,7 @@ contract veFXSRevest is Test {
 
         //Check
         assertGt(expectedValue, 2e18, "Deposit value is lower than expected!");
+        assertEq(FXS.balanceOf(fxsWhale), fxsBalance - amount, "FXS balance is not correct!");
 
         //Logging
         console.log("veFXS balance should be around 2e18: ", expectedValue);
@@ -173,6 +174,16 @@ contract veFXSRevest is Test {
         //Check
         assertGt(revestVe.getValue(fnftId), oriVeFXS, "Additional deposit not success!");
 
+        //Destroy the address of smart wallet for testing purpose
+        destroyAccount(smartWalletAddress, address(admin));
+
+        //Skip 2 years and check if user can withdraw their fnft
+        skip(52 weeks * 2 + 1 weeks);
+        startHoax(fxsWhale);
+        uint yieldToClaim = IYieldDistributor(DISTRIBUTOR).earned(smartWalletAddress);
+        assertGt(yieldToClaim, 0, "No yield to claim!");
+        revest.withdrawFNFT(fnftId, 1);
+
         //Logging
         console.log("Original veFXS balance in Smart Wallet: ", oriVeFXS);
         console.log("New veFXS balance in Smart Wallet: ", revestVe.getValue(fnftId));
@@ -181,11 +192,13 @@ contract veFXSRevest is Test {
     /**
      * This test case focus on if user can extend the locking period on the vault
      */
-    function testExtendLockingPeriod() public {
-        // Outline the parameters that will govern the FNFT
-        uint time = block.timestamp;
-        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-        uint amount = 1e18; //FXS  
+    function testExtendLockingPeriod(uint amount) public {
+         //Fuzz Set-up
+        uint fxsBalance = FXS.balanceOf(address(fxsWhale));
+        vm.assume(amount >= 1e18 && amount <= fxsBalance);
+
+        //Expiration for fnft config
+        uint expiration = block.timestamp + (2 * 365 * 60 * 60 * 24); // 2 years XS  
 
         //Minting the FNFT
         hoax(fxsWhale);
@@ -206,9 +219,8 @@ contract veFXSRevest is Test {
         destroyAccount(smartWalletAddress, address(admin));
 
         //Calculating expiration time for new extending time
-        time = block.timestamp;
-        uint overly_expiration = time + (5 * 365 * 60 * 60 * 24 - 3600); //5 years in the future
-        expiration = time + (4 * 365 * 60 * 60 * 24 - 3600); // 4 years in future in future
+        uint overly_expiration =  block.timestamp + (5 * 365 * 60 * 60 * 24 - 3600); //5 years in the future
+        expiration =  block.timestamp + (4 * 365 * 60 * 60 * 24 - 3600); // 4 years in future in future
 
         //attempt to extend FNFT Maturity more than 2 year max
         hoax(fxsWhale);
@@ -218,12 +230,18 @@ contract veFXSRevest is Test {
         //Attempt to extend FNFT Maturity
         hoax(fxsWhale);
         revest.extendFNFTMaturity(fnftId, expiration);
+        destroyAccount(smartWalletAddress, address(admin));
 
         //Checking after-extend maturity of the lock after deposit
         uint currentMaturity = lockManager.fnftIdToLock(fnftId).timeLockExpiry;
 
         //Check
         assertGt(currentMaturity, initialMaturity, "Maturity has not been changed");
+
+        //Skip 4 years to end of period and check if user can withdraw FNFT
+        skip(52 weeks * 4 + 1 weeks);
+        hoax(fxsWhale);
+        revest.withdrawFNFT(fnftId, 1);
 
         //Locking
         console.log("Initual Maturity: ", initialMaturity);
@@ -233,11 +251,13 @@ contract veFXSRevest is Test {
     /**
      * This test case focus on if user can unlock and withdaw their fnft, and plus claim fee
      */
-    function testUnlockAndWithdraw() public {
-        // Outline the parameters that will govern the FNFT
-        uint time = block.timestamp;
-        uint expiration = time + (2 * 365 * 60 * 60 * 24); // 2 years 
-        uint amount = 1e18; //FXS  
+    function testUnlockAndWithdraw(uint amount) public {
+         //Fuzz Set-up
+        uint fxsBalance = FXS.balanceOf(address(fxsWhale));
+        vm.assume(amount >= 1e18 && amount <= fxsBalance);
+
+        //Expiration for fnft config 
+        uint expiration = block.timestamp + (2 * 365 * 60 * 60 * 24); // 2 years 
 
         //Minting the FNFT
         hoax(fxsWhale);
