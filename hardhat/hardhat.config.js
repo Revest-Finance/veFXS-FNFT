@@ -10,8 +10,8 @@ module.exports = {
     networks: {
         hardhat: {
             forking: {
-                url: "https://eth-mainnet.g.alchemy.com/v2/zOVFUzSEld1v_MuTOqGPYkTYttwBUrmF",
-                blockNumber: 17277518,
+                url: "https://mainnet.infura.io/v3/08cfb263de5249ba9bb25868d93d0d45",
+                blockNumber: 17389890,
                 blockGasLimit: 100100000,
                 gas: 21000000
             },
@@ -29,6 +29,7 @@ module.exports = {
     paths: {
         sources: "./contracts",
         tests: "./test",
+        scripts: "./scripts",
         cache: "./cache",
         artifacts: "./artifacts",
     },

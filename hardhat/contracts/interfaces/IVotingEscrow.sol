@@ -42,6 +42,4 @@ interface IVotingEscrow {
     function user_point_epoch(address _addr) external view returns (uint epoch);
 
     function user_point_history(address _addr, uint index) external view returns (Point memory pt);
-
-
 }
