@@ -97,12 +97,6 @@ contract VestedEscrowSmartWallet {
         _cleanMemory();
     }
 
-    // Proxy function for ease of use and gas-savings
-    function proxyApproveAll(address[] memory tokens, address spender) external onlyMaster {
-        for(uint i = 0; i < tokens.length; i++) {
-            IERC20(tokens[i]).approve(spender, MAX_INT);
-        }
-    }
 
     /// Proxy function to send arbitrary messages. Useful for delegating votes and similar activities
     function proxyExecute(
